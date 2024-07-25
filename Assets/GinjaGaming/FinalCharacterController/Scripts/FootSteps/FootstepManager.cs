@@ -16,6 +16,9 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
         [SerializeField] private PrefabPool decalPool;
 
         private TerrainData _terrainData;
+
+        private bool _terrainDetected;
+
         #endregion
 
         #region Startup
@@ -27,7 +30,12 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
                 trigger.FootstepManager = this;
             }
 
-            _terrainData = Terrain.activeTerrain.terrainData;
+            _terrainDetected = !(Terrain.activeTerrain == null);
+
+            if (_terrainDetected)
+            {
+                _terrainData = Terrain.activeTerrain.terrainData;
+            }
         }
     
         private void Start()
@@ -50,6 +58,11 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
 
         public FootStepAudio GetFootStepForPosition(Vector3 position)
         {
+            if (!_terrainDetected)
+            {
+                return null;
+            }
+
             string textureName = GetTerrainTextureAtPosition(position);
             if (string.IsNullOrEmpty(textureName))
             {

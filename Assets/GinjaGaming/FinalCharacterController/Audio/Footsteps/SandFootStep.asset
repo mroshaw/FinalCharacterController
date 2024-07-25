@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 770772c429b6c2443a3aa6ea1d498725, type: 3}
+  m_Name: SandFootStep
+  m_EditorClassIdentifier: 
+  spawnParticle: 1
+  spawnDecal: 1
+  textureNames:
+  - Sand
+  audioClips:
+  - {fileID: 8300000, guid: d1f9cfae5fede0f45a48cf11402bb974, type: 3}
+  - {fileID: 8300000, guid: 0ab3e2480803dd9449b305540f8f57dc, type: 3}
+  - {fileID: 8300000, guid: af0bf985b2e01114082165a2935c623f, type: 3}
