@@ -955,45 +955,6 @@ namespace GinjaGaming.FinalCharacterController.Input
                     ""isPartOfComposite"": false
                 }
             ]
-        },
-        {
-            ""name"": ""SystemActionsMap"",
-            ""id"": ""7490741c-6973-428a-98d6-d458101b9014"",
-            ""actions"": [
-                {
-                    ""name"": ""Pause"",
-                    ""type"": ""Button"",
-                    ""id"": ""9594fe38-4b14-4492-b5fb-cfd233b9165d"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""9f232b37-d74e-4d53-bb63-5d6f76035c57"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard and Mouse;Gamepad"",
-                    ""action"": ""Pause"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""fa6e2a66-1965-4cbb-b57f-ccf952384d67"",
-                    ""path"": ""<Keyboard>/p"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard and Mouse;Gamepad"",
-                    ""action"": ""Pause"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
         }
     ],
     ""controlSchemes"": [
@@ -1057,9 +1018,6 @@ namespace GinjaGaming.FinalCharacterController.Input
             m_PlayerActionsMap = asset.FindActionMap("PlayerActionsMap", throwIfNotFound: true);
             m_PlayerActionsMap_Gathering = m_PlayerActionsMap.FindAction("Gathering", throwIfNotFound: true);
             m_PlayerActionsMap_Attacking = m_PlayerActionsMap.FindAction("Attacking", throwIfNotFound: true);
-            // SystemActionsMap
-            m_SystemActionsMap = asset.FindActionMap("SystemActionsMap", throwIfNotFound: true);
-            m_SystemActionsMap_Pause = m_SystemActionsMap.FindAction("Pause", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -1413,52 +1371,6 @@ namespace GinjaGaming.FinalCharacterController.Input
             }
         }
         public PlayerActionsMapActions @PlayerActionsMap => new PlayerActionsMapActions(this);
-
-        // SystemActionsMap
-        private readonly InputActionMap m_SystemActionsMap;
-        private List<ISystemActionsMapActions> m_SystemActionsMapActionsCallbackInterfaces = new List<ISystemActionsMapActions>();
-        private readonly InputAction m_SystemActionsMap_Pause;
-        public struct SystemActionsMapActions
-        {
-            private @PlayerControls m_Wrapper;
-            public SystemActionsMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Pause => m_Wrapper.m_SystemActionsMap_Pause;
-            public InputActionMap Get() { return m_Wrapper.m_SystemActionsMap; }
-            public void Enable() { Get().Enable(); }
-            public void Disable() { Get().Disable(); }
-            public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(SystemActionsMapActions set) { return set.Get(); }
-            public void AddCallbacks(ISystemActionsMapActions instance)
-            {
-                if (instance == null || m_Wrapper.m_SystemActionsMapActionsCallbackInterfaces.Contains(instance)) return;
-                m_Wrapper.m_SystemActionsMapActionsCallbackInterfaces.Add(instance);
-                @Pause.started += instance.OnPause;
-                @Pause.performed += instance.OnPause;
-                @Pause.canceled += instance.OnPause;
-            }
-
-            private void UnregisterCallbacks(ISystemActionsMapActions instance)
-            {
-                @Pause.started -= instance.OnPause;
-                @Pause.performed -= instance.OnPause;
-                @Pause.canceled -= instance.OnPause;
-            }
-
-            public void RemoveCallbacks(ISystemActionsMapActions instance)
-            {
-                if (m_Wrapper.m_SystemActionsMapActionsCallbackInterfaces.Remove(instance))
-                    UnregisterCallbacks(instance);
-            }
-
-            public void SetCallbacks(ISystemActionsMapActions instance)
-            {
-                foreach (var item in m_Wrapper.m_SystemActionsMapActionsCallbackInterfaces)
-                    UnregisterCallbacks(item);
-                m_Wrapper.m_SystemActionsMapActionsCallbackInterfaces.Clear();
-                AddCallbacks(instance);
-            }
-        }
-        public SystemActionsMapActions @SystemActionsMap => new SystemActionsMapActions(this);
         private int m_KeyboardandMouseSchemeIndex = -1;
         public InputControlScheme KeyboardandMouseScheme
         {
@@ -1506,10 +1418,6 @@ namespace GinjaGaming.FinalCharacterController.Input
         {
             void OnGathering(InputAction.CallbackContext context);
             void OnAttacking(InputAction.CallbackContext context);
-        }
-        public interface ISystemActionsMapActions
-        {
-            void OnPause(InputAction.CallbackContext context);
         }
     }
 }
