@@ -1,10 +1,7 @@
-using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace GinjaGaming.FinalCharacterController
+namespace GinjaGaming.FinalCharacterController.Input
 {
     [DefaultExecutionOrder(-2)]
     public class PlayerActionsInput : MonoBehaviour, PlayerControls.IPlayerActionsMapActions
