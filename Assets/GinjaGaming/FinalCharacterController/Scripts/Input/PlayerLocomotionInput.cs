@@ -1,20 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace GinjaGaming.FinalCharacterController
+namespace GinjaGaming.FinalCharacterController.Input
 {
     [DefaultExecutionOrder(-2)]
     public class PlayerLocomotionInput : MonoBehaviour, PlayerControls.IPlayerLocomotionMapActions
     {
         #region Class Variables
+
+        [Header("Input Settings")]
         [SerializeField] private bool holdToSprint = true;
         public Vector2 MovementInput { get; private set; }
         public Vector2 LookInput { get; private set; }
         public bool JumpPressed { get; private set; }
         public bool SprintToggledOn { get; private set; }
         public bool WalkToggledOn { get; private set; }
+
+        public InputDevice ActiveDevice { get; private set; }
+
         #endregion
 
         #region Startup
@@ -28,6 +31,9 @@ namespace GinjaGaming.FinalCharacterController
 
             PlayerInputManager.Instance.PlayerControls.PlayerLocomotionMap.Enable();
             PlayerInputManager.Instance.PlayerControls.PlayerLocomotionMap.SetCallbacks(this);
+
+            ActiveDevice = Keyboard.current;
+
         }
 
         private void OnDisable()
@@ -53,11 +59,13 @@ namespace GinjaGaming.FinalCharacterController
         #region Input Callbacks
         public void OnMovement(InputAction.CallbackContext context)
         {
+            ActiveDevice = context.control.device;
             MovementInput = context.ReadValue<Vector2>();
         }
 
         public void OnLook(InputAction.CallbackContext context)
         {
+            ActiveDevice = context.control.device;
             LookInput = context.ReadValue<Vector2>();
         }
 

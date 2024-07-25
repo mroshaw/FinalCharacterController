@@ -1,30 +1,20 @@
-using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace GinjaGaming.FinalCharacterController
+namespace GinjaGaming.FinalCharacterController.Input
 {
     [DefaultExecutionOrder(-2)]
     public class ThirdPersonInput : MonoBehaviour, PlayerControls.IThirdPersonMapActions
     {
         #region Class Variables
         public Vector2 ScrollInput { get; private set; }
+        public InputDevice ActiveDevice { get; private set; }
 
-        [SerializeField] private CinemachineVirtualCamera _virtualCamera;
-        [SerializeField] private float _cameraZoomSpeed = 0.1f;
-        [SerializeField] private float _cameraMinZoom = 1f;
-        [SerializeField] private float _cameraMaxZoom = 5f;
+        private bool _isScrollHeld;
 
-        private Cinemachine3rdPersonFollow _thirdPersonFollow;
         #endregion
 
         #region Startup
-        private void Awake()
-        {
-            _thirdPersonFollow = _virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
-        }
         private void OnEnable()
         {
             if (PlayerInputManager.Instance?.PlayerControls == null)
@@ -51,13 +41,12 @@ namespace GinjaGaming.FinalCharacterController
         #endregion
 
         #region Update
-        private void Update()
-        {
-            _thirdPersonFollow.CameraDistance = Mathf.Clamp(_thirdPersonFollow.CameraDistance + ScrollInput.y, _cameraMinZoom, _cameraMaxZoom);
-        }
-
         private void LateUpdate()
         {
+            if (ActiveDevice is Gamepad && _isScrollHeld)
+            {
+                return;
+            }
             ScrollInput = Vector2.zero;
         }
         #endregion
@@ -65,11 +54,29 @@ namespace GinjaGaming.FinalCharacterController
         #region Input Callbacks
         public void OnScrollCamera(InputAction.CallbackContext context)
         {
-            if (!context.performed)
-                return;
+            ActiveDevice = context.control.device;
+
+            if (ActiveDevice is Gamepad)
+            {
+                if (context.performed)
+                {
+                    _isScrollHeld = true;
+                    Vector2 gamepadScrollInput = context.ReadValue<Vector2>();
+                    ScrollInput = -1f * gamepadScrollInput.normalized;
+                }
+                else if (context.canceled)
+                {
+                    _isScrollHeld = false;
+                }
+            }
+            else
+            {
+                if (!context.performed)
+                    return;
+            }
 
             Vector2 scrollInput = context.ReadValue<Vector2>();
-            ScrollInput = -1f * scrollInput.normalized * _cameraZoomSpeed;
+            ScrollInput = -1f * scrollInput.normalized;
         }
         #endregion
     }
