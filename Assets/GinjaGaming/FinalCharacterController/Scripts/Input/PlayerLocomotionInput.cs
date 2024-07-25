@@ -68,7 +68,7 @@ namespace GinjaGaming.FinalCharacterController.Input
         public void OnLook(InputAction.CallbackContext context)
         {
             ActiveDevice = context.control.device;
-            if (ActiveDevice is Gamepad || invertLook)
+            if (ActiveDevice is Gamepad && invertLook)
             {
                 // Invert the Y axis, if invertLook is selected
                 LookInput = new Vector2(context.ReadValue<Vector2>().x, context.ReadValue<Vector2>().y * -1);
