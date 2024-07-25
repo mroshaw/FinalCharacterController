@@ -17,7 +17,7 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
         [SerializeField] private PrefabPool particleFxPool;
         [SerializeField] private PrefabPool decalPool;
 
-        [Header("Debug")] [SerializeField] private bool debugTextureName;
+        [Header("Debug")][SerializeField] private bool debugTextureName;
 
         private TerrainData _terrainData;
 
@@ -60,15 +60,13 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
 
             if (otherCollider is TerrainCollider)
             {
-                string terrainTextureName;
-
-                Vector3 collisionPosition = otherCollider.ClosestPoint(footTransform.position);
-                if(!FindTerrainTextureFromCollision(otherCollider, out terrainTextureName))
+                Vector3 collisionPosition = footTransform.position;
+                if (!FindTerrainTextureAtPosition(footTransform.position, out var terrainTextureName))
                 {
                     footstepSurface = defaultSurface;
                     spawnPosition = collisionPosition;
                 }
-                float terrainHeight =  Terrain.activeTerrain.SampleHeight(collisionPosition);
+                float terrainHeight = Terrain.activeTerrain.SampleHeight(collisionPosition);
                 spawnPosition = new Vector3(collisionPosition.x, terrainHeight, collisionPosition.z);
                 footstepSurface = FindSurfaceFromTexture(terrainTextureName);
                 return;
@@ -120,20 +118,18 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
             return true;
         }
 
-        private bool FindTerrainTextureFromCollision(Collider other, out string textureName)
+        private bool FindTerrainTextureAtPosition(Vector3 collisionPosition, out string textureName)
         {
             textureName = "";
-
-            Vector3 collisionPosition = other.ClosestPoint(transform.position);
 
             Vector3 terrainSize = Terrain.activeTerrain.terrainData.size;
             Vector2 textureSize = new Vector2(Terrain.activeTerrain.terrainData.alphamapWidth,
                 Terrain.activeTerrain.terrainData.alphamapHeight);
 
-            int alphaX = (int)((collisionPosition.x/terrainSize.x)*textureSize.x+0.5f);
-            int alphaY = (int)((collisionPosition.z/terrainSize.z)*textureSize.y+0.5f);
+            int alphaX = (int)((collisionPosition.x / terrainSize.x) * textureSize.x + 0.5f);
+            int alphaY = (int)((collisionPosition.z / terrainSize.z) * textureSize.y + 0.5f);
 
-            float[,,] terrainMaps = Terrain.activeTerrain.terrainData.GetAlphamaps(alphaX, alphaY,1 ,1);
+            float[,,] terrainMaps = Terrain.activeTerrain.terrainData.GetAlphamaps(alphaX, alphaY, 1, 1);
 
             float[] textures = new float[terrainMaps.GetUpperBound(2) + 1];
 
