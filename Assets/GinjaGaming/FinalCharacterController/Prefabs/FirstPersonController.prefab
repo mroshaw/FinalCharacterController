@@ -3162,12 +3162,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!1 &4923079350185540872
 GameObject:
   m_ObjectHideFlags: 0
@@ -3849,7 +3849,7 @@ Animator:
   m_GameObject: {fileID: 5490972504386450151}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: de13a7420582ded45a8d7d3f96889aca, type: 3}
-  m_Controller: {fileID: 9100000, guid: 47d9259d2688bd147978a229db95d580, type: 2}
+  m_Controller: {fileID: 9100000, guid: 28749d1f2575e94468e3665d8ad9e187, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -3908,6 +3908,7 @@ MonoBehaviour:
   sprintSpeed: 7
   inAirAcceleration: 25
   drag: 20
+  inAirDrag: 10
   gravity: 25
   terminalVelocity: 50
   jumpSpeed: 1
@@ -3917,7 +3918,11 @@ MonoBehaviour:
   lookSenseH: 0.1
   lookSenseV: 0.1
   lookLimitV: 70
-  _groundLayers:
+  gamepadLookXMultiplier: 5
+  gamepadLookYMultiplier: 5
+  gamepadMoveRunThreshold: 0.5
+  gamepadMoveSprintThreshold: 0.8
+  groundLayers:
     serializedVersion: 2
     m_Bits: 1
 --- !u!114 &2715700542686990342
@@ -3958,7 +3963,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d015a2dfbd3791849a8c184d57c68c14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 2769050606353271290}
+  animator: {fileID: 2769050606353271290}
   locomotionBlendSpeed: 4
 --- !u!114 &8091903077792685729
 MonoBehaviour:
