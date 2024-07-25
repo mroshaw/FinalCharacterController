@@ -2751,8 +2751,8 @@ MonoBehaviour:
   lookSenseH: 0.1
   lookSenseV: 0.1
   lookLimitV: 70
-  gamepadLookXMultiplier: 5
-  gamepadLookYMultiplier: 5
+  gamepadLookXMultiplier: 10
+  gamepadLookYMultiplier: 10
   gamepadMoveRunThreshold: 0.5
   gamepadMoveSprintThreshold: 0.8
   groundLayers:
@@ -2771,6 +2771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holdToSprint: 0
+  invertLook: 0
 --- !u!114 &3391622028761012007
 MonoBehaviour:
   m_ObjectHideFlags: 0

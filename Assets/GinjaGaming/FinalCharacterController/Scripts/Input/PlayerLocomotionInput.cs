@@ -9,7 +9,9 @@ namespace GinjaGaming.FinalCharacterController.Input
         #region Class Variables
 
         [Header("Input Settings")]
-        [SerializeField] private bool holdToSprint = true;
+        public bool holdToSprint = true;
+        public bool invertLook = false;
+
         public Vector2 MovementInput { get; private set; }
         public Vector2 LookInput { get; private set; }
         public bool JumpPressed { get; private set; }
@@ -66,6 +68,12 @@ namespace GinjaGaming.FinalCharacterController.Input
         public void OnLook(InputAction.CallbackContext context)
         {
             ActiveDevice = context.control.device;
+            if (ActiveDevice is Gamepad || invertLook)
+            {
+                // Invert the Y axis, if invertLook is selected
+                LookInput = new Vector2(context.ReadValue<Vector2>().x, context.ReadValue<Vector2>().y * -1);
+                return;
+            }
             LookInput = context.ReadValue<Vector2>();
         }
 
