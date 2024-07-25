@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace GinjaGaming.FinalCharacterController.FootSteps
 {
-    [CreateAssetMenu(fileName = "FootStepAudio", menuName = "Footsteps/Foot Step Audio", order = 1)]
-    public class FootStepAudio : ScriptableObject
+    [CreateAssetMenu(fileName = "FootstepSurface", menuName = "Footsteps/Foot Step Surface", order = 1)]
+    public class FootstepSurface : ScriptableObject
     {
         #region Class Variables
         [Header("Footstep Settings")]

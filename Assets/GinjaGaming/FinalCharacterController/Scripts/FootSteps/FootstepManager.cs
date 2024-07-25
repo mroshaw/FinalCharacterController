@@ -5,15 +5,19 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
     public class FootstepManager : MonoBehaviour
     {
         #region Class Variables
+
         [Header("Settings")]
         [SerializeField] private FootstepTrigger[] footstepTriggers;
-        [SerializeField] private FootStepAudio[] footStepAudios;
+        [SerializeField] private FootstepSurface defaultSurface;
+        [SerializeField] private FootstepSurface[] footStepAudios;
 
         [Header("Spawn Settings")] public bool alignToTerrainSlope;
 
         [Header("Pool Settings")]
         [SerializeField] private PrefabPool particleFxPool;
         [SerializeField] private PrefabPool decalPool;
+
+        [Header("Debug")] [SerializeField] private bool debugTextureName;
 
         private TerrainData _terrainData;
 
@@ -37,18 +41,12 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
                 _terrainData = Terrain.activeTerrain.terrainData;
             }
         }
-    
-        private void Start()
-        {
-
-        }
         #endregion
 
         #region Class methods
         public void SpawnFootStepParticleFx(Vector3 spawnPosition, Quaternion spawnRotation)
         {
             GameObject particleFxInstance = particleFxPool.SpawnInstance(spawnPosition, spawnRotation);
-
         }
 
         public void SpawnFootStepDecal(Vector3 spawnPosition, Quaternion spawnRotation)
@@ -56,53 +54,87 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
             GameObject decalInstance = decalPool.SpawnInstance(spawnPosition, spawnRotation);
         }
 
-        public FootStepAudio GetFootStepForPosition(Vector3 position)
+        public void GetSurfaceFromCollision(Transform footTransform, Collider otherCollider,
+            out FootstepSurface footstepSurface, out Vector3 spawnPosition)
         {
-            if (!_terrainDetected)
-            {
-                return null;
-            }
 
-            string textureName = GetTerrainTextureAtPosition(position);
-            if (string.IsNullOrEmpty(textureName))
+            if (otherCollider is TerrainCollider)
             {
-                return null;
-            }
+                string terrainTextureName;
 
-            FootStepAudio footStepAudio = GetAudioForTexture(textureName);
-            if (footStepAudio == null)
+                Vector3 collisionPosition = otherCollider.ClosestPoint(footTransform.position);
+                if(!FindTerrainTextureFromCollision(otherCollider, out terrainTextureName))
+                {
+                    footstepSurface = defaultSurface;
+                    spawnPosition = collisionPosition;
+                }
+                float terrainHeight =  Terrain.activeTerrain.SampleHeight(collisionPosition);
+                spawnPosition = new Vector3(collisionPosition.x, terrainHeight, collisionPosition.z);
+                footstepSurface = FindSurfaceFromTexture(terrainTextureName);
+                return;
+
+            }
+            spawnPosition = otherCollider is MeshCollider { convex: true } or BoxCollider or SphereCollider or CapsuleCollider ? otherCollider.ClosestPoint(footTransform.position) : footTransform.position;
+
+            if (FindMaterialTextureFromCollider(otherCollider, out var meshTextureName))
             {
-                return null;
+                footstepSurface = FindSurfaceFromTexture(meshTextureName);
+                return;
             }
-
-            return footStepAudio;
+            footstepSurface = defaultSurface;
+            spawnPosition = footTransform.position;
         }
 
-        private FootStepAudio GetAudioForTexture(string textureName)
+        private FootstepSurface FindSurfaceFromTexture(string textureName)
         {
-            foreach (FootStepAudio footstepAudio in footStepAudios)
+            foreach (FootstepSurface currSurface in footStepAudios)
             {
-                if (footstepAudio.ContainsTextureName(textureName) && footstepAudio.audioClips.Length > 0)
+                if (currSurface.ContainsTextureName(textureName) && currSurface.audioClips.Length > 0)
                 {
-                    return footstepAudio;
+                    return currSurface;
+                    ;
                 }
             }
-            return null;
+            return defaultSurface;
         }
 
-        private string GetTerrainTextureAtPosition(Vector3 position)
+        private bool FindMaterialTextureFromCollider(Collider other, out string textureName)
         {
+            textureName = "";
+
+            MeshRenderer meshRender = other.GetComponent<MeshRenderer>();
+            if (!meshRender)
+            {
+                return false;
+            }
+            Material meshMaterial = meshRender.material;
+            if (!meshMaterial)
+            {
+                return false;
+            }
+            textureName = meshMaterial.mainTexture.name;
+            if (debugTextureName)
+            {
+                Debug.Log($"FootstepManager: Mesh texture is : {textureName}");
+            }
+            return true;
+        }
+
+        private bool FindTerrainTextureFromCollision(Collider other, out string textureName)
+        {
+            textureName = "";
+
+            Vector3 collisionPosition = other.ClosestPoint(transform.position);
+
             Vector3 terrainSize = Terrain.activeTerrain.terrainData.size;
             Vector2 textureSize = new Vector2(Terrain.activeTerrain.terrainData.alphamapWidth,
                 Terrain.activeTerrain.terrainData.alphamapHeight);
 
-            // Lookup texture we are standing on:
-            int alphaX = (int)((position.x/terrainSize.x)*textureSize.x+0.5f);
-            int alphaY = (int)((position.z/terrainSize.z)*textureSize.y+0.5f);
+            int alphaX = (int)((collisionPosition.x/terrainSize.x)*textureSize.x+0.5f);
+            int alphaY = (int)((collisionPosition.z/terrainSize.z)*textureSize.y+0.5f);
 
             float[,,] terrainMaps = Terrain.activeTerrain.terrainData.GetAlphamaps(alphaX, alphaY,1 ,1);
 
-            // extract the 3D array data to a 1D array:
             float[] textures = new float[terrainMaps.GetUpperBound(2) + 1];
 
             for (int n = 0; n < textures.Length; n++)
@@ -112,25 +144,30 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
 
             if (textures.Length == 0)
             {
-                return "";
+                return false;
             }
 
-            float maxMix = 0;
-            int maxIndex = 0;
+            // Looking for the texture with the highest 'mix'
+            float textureMaxMix = 0;
+            int textureMaxIndex = 0;
 
-            // loop through each mix value and find the maximum
-            for (int n = 0; n < textures.Length; n++)
+            for (int currTexture = 0; currTexture < textures.Length; currTexture++)
             {
-                if (textures[n] > maxMix)
+                if (textures[currTexture] > textureMaxMix)
                 {
-                    maxIndex = n;
-                    maxMix = textures[n];
+                    textureMaxIndex = currTexture;
+                    textureMaxMix = textures[currTexture];
                 }
             }
 
-            // Texture is at index maxIndex
-            string textureName = (_terrainData != null && _terrainData.terrainLayers.Length > 0) ? (_terrainData.terrainLayers[maxIndex]).diffuseTexture.name : "";
-            return textureName;
+            // Texture is at index textureMaxIndex
+            textureName = (_terrainData != null && _terrainData.terrainLayers.Length > 0) ? (_terrainData.terrainLayers[textureMaxIndex]).diffuseTexture.name : "";
+
+            if (debugTextureName)
+            {
+                Debug.Log($"FootstepManager: Terrain texture is : {textureName}");
+            }
+            return true;
         }
         #endregion
     }

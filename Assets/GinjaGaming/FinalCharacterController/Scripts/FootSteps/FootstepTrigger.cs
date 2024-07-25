@@ -6,6 +6,8 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
     {
         #region Class Variables
         private AudioSource _audioSource;
+
+        public FootstepManager FootstepManager { get; set; }
         #endregion
 
         #region Startup
@@ -20,45 +22,35 @@ namespace GinjaGaming.FinalCharacterController.FootSteps
         }
         #endregion
 
-        public FootstepManager FootstepManager { get; set; }
+        #region Class methods
         public override void TriggerEnter(Collider other)
         {
-            Vector3 collisionPosition = other.ClosestPoint(transform.position);
-
-            FootStepAudio footstepAudio =
-                FootstepManager.GetFootStepForPosition(collisionPosition);
-
-            if (footstepAudio == null)
-            {
-                return;
-            }
-
-            float terrainHeight =  Terrain.activeTerrain.SampleHeight(collisionPosition);
-            Vector3 positionOnTerrain = new Vector3(collisionPosition.x, terrainHeight, collisionPosition.z);
+            FootstepManager.GetSurfaceFromCollision(transform, other, out FootstepSurface footstepSurface,
+                out Vector3 spawnPosition);
 
             // Spawn particles
-            if (footstepAudio.spawnParticle)
+            if (footstepSurface.spawnParticle)
             {
-                FootstepManager.SpawnFootStepParticleFx(positionOnTerrain, FootstepManager.transform.rotation);
-            }
-            // Spawn decal
-            if (footstepAudio.spawnParticle)
-            {
-                FootstepManager.SpawnFootStepDecal(positionOnTerrain, FootstepManager.transform.rotation);
+                FootstepManager.SpawnFootStepParticleFx(spawnPosition, FootstepManager.transform.rotation);
             }
 
-            // Play audio
+            // Spawn decal
+            if (footstepSurface.spawnDecal)
+            {
+                FootstepManager.SpawnFootStepDecal(spawnPosition, FootstepManager.transform.rotation);
+            }
+
+            // Play random audio
             System.Random randomAudio = new System.Random();
-            int audioIndex = randomAudio.Next(0, footstepAudio.audioClips.Length);
-            AudioClip audioClip = footstepAudio.audioClips[audioIndex];
+            int audioIndex = randomAudio.Next(0, footstepSurface.audioClips.Length);
+            AudioClip audioClip = footstepSurface.audioClips[audioIndex];
             _audioSource.Stop();
             _audioSource.PlayOneShot(audioClip);
         }
 
         public override void TriggerExit(Collider other)
         {
-
         }
-
+        #endregion
     }
 }
