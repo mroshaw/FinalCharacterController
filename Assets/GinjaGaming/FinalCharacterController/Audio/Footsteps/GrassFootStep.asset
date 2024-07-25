@@ -9,13 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 770772c429b6c2443a3aa6ea1d498725, type: 3}
-  m_Name: GrassFootStep
+  m_Script: {fileID: 11500000, guid: 664532d508375604994950e76a111915, type: 3}
+  m_Name: GrassFootstep
   m_EditorClassIdentifier: 
   spawnParticle: 0
   spawnDecal: 0
   textureNames:
   - Grass
+  - MeadowGrass_a
   audioClips:
   - {fileID: 8300000, guid: 97b25c71cae36e243835b8aa3800e1fe, type: 3}
   - {fileID: 8300000, guid: 2dd1ecba68abe2f489b369db6edeb6c8, type: 3}
