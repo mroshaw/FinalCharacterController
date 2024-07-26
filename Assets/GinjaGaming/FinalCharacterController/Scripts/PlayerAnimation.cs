@@ -10,6 +10,8 @@ namespace GinjaGaming.FinalCharacterController
         [SerializeField] private Animator animator;
         [SerializeField] private float locomotionBlendSpeed = 4f;
 
+        public bool RollingAnimIsPlaying { get; set; }
+
         private PlayerState _playerState;
         private PlayerController _playerController;
         private PlayerActionsInput _playerActionsInput;
@@ -22,6 +24,7 @@ namespace GinjaGaming.FinalCharacterController
         private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
         private static readonly int IsFallingHash = Animator.StringToHash("IsFalling");
         private static readonly int IsJumpingHash = Animator.StringToHash("IsJumping");
+        private static readonly int IsRollingHash = Animator.StringToHash("IsRolling");
 
         // Actions
         private static readonly int IsAttackingHash = Animator.StringToHash("IsAttacking");
@@ -40,7 +43,7 @@ namespace GinjaGaming.FinalCharacterController
             _playerState = GetComponent<PlayerState>();
             _playerController = GetComponent<PlayerController>();
             _playerActionsInput = GetComponent<PlayerActionsInput>();
-            _actionHashes = new int[] { IsGatheringHash };
+            _actionHashes = new int[] { IsGatheringHash, IsRollingHash };
         }
 
         private void Update()
@@ -66,6 +69,7 @@ namespace GinjaGaming.FinalCharacterController
             animator.SetBool(IsRotatingToTargetHash, _playerController.IsRotatingToTarget);
             animator.SetBool(IsAttackingHash, _playerActionsInput.AttackPressed);
             animator.SetBool(IsGatheringHash, _playerActionsInput.GatherPressed);
+            animator.SetBool(IsRollingHash, _playerActionsInput.RollPressed);
             animator.SetBool(IsPlayingActionHash, isPlayingAction);
 
             animator.SetFloat(LateralSpeedHash, _currentBlendInput.x);

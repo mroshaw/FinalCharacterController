@@ -102,15 +102,7 @@ namespace GinjaGaming.FinalCharacterController
             bool canRun = CanRun();
             bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero;             //order
             bool isMovingLaterally = IsMovingLaterally();                                            //matters
-            bool isSprinting;
-            if (_playerLocomotionInput.ActiveDevice is Gamepad)
-            {
-                isSprinting = _playerLocomotionInput.MovementInput.y > gamepadMoveSprintThreshold && isMovingLaterally;
-            }
-            else
-            {
-                isSprinting = isMovingLaterally && (!canRun || _playerLocomotionInput.SprintToggledOn);
-            }
+            bool isSprinting = isMovingLaterally && (!canRun || _playerLocomotionInput.SprintToggledOn);
 
             bool isWalking;
             if (_playerLocomotionInput.ActiveDevice is Gamepad)
@@ -131,7 +123,7 @@ namespace GinjaGaming.FinalCharacterController
             _playerState.SetPlayerMovementState(lateralState);
 
             // Control Airborne State
-            if ((!isGrounded || _jumpedLastFrame) && _characterController.velocity.y > 0f)
+            if ((!isGrounded || _jumpedLastFrame) && _characterController.velocity.y > 0.2f)
             {
                 _playerState.SetPlayerMovementState(PlayerMovementState.Jumping);
                 _jumpedLastFrame = false;

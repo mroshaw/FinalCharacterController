@@ -1,3 +1,4 @@
+using log4net.Appender;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,6 +12,7 @@ namespace GinjaGaming.FinalCharacterController.Input
         private PlayerState _playerState;
         public bool GatherPressed { get; private set; }
         public bool AttackPressed { get; private set; }
+        public bool RollPressed { get; private set; }
         #endregion
 
         #region Startup
@@ -53,6 +55,11 @@ namespace GinjaGaming.FinalCharacterController.Input
             {
                 GatherPressed = false;
             }
+
+            if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Falling)
+            {
+                RollPressed = false;
+            }
         }
 
         public void SetGatherPressedFalse()
@@ -63,6 +70,11 @@ namespace GinjaGaming.FinalCharacterController.Input
         public void SetAttackPressedFalse() 
         { 
             AttackPressed = false;
+        }
+
+        public void SetRollPressedFalse()
+        {
+            RollPressed = false;
         }
         #endregion
 
@@ -82,6 +94,15 @@ namespace GinjaGaming.FinalCharacterController.Input
 
             AttackPressed = true;
         }
+
+        public void OnRolling(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+                return;
+
+            RollPressed = true;
+        }
+
         #endregion
     }
 }

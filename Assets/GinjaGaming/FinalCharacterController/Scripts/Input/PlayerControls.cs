@@ -907,6 +907,15 @@ namespace GinjaGaming.FinalCharacterController.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rolling"",
+                    ""type"": ""Button"",
+                    ""id"": ""645b99ca-5991-46a4-935e-948474b166b3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -951,6 +960,28 @@ namespace GinjaGaming.FinalCharacterController.Input
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""Attacking"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""890dece4-9dd6-4739-8fe1-277568801048"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rolling"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""48b09032-a9d9-4890-8525-806cae2fd27a"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rolling"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1018,6 +1049,7 @@ namespace GinjaGaming.FinalCharacterController.Input
             m_PlayerActionsMap = asset.FindActionMap("PlayerActionsMap", throwIfNotFound: true);
             m_PlayerActionsMap_Gathering = m_PlayerActionsMap.FindAction("Gathering", throwIfNotFound: true);
             m_PlayerActionsMap_Attacking = m_PlayerActionsMap.FindAction("Attacking", throwIfNotFound: true);
+            m_PlayerActionsMap_Rolling = m_PlayerActionsMap.FindAction("Rolling", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -1323,12 +1355,14 @@ namespace GinjaGaming.FinalCharacterController.Input
         private List<IPlayerActionsMapActions> m_PlayerActionsMapActionsCallbackInterfaces = new List<IPlayerActionsMapActions>();
         private readonly InputAction m_PlayerActionsMap_Gathering;
         private readonly InputAction m_PlayerActionsMap_Attacking;
+        private readonly InputAction m_PlayerActionsMap_Rolling;
         public struct PlayerActionsMapActions
         {
             private @PlayerControls m_Wrapper;
             public PlayerActionsMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @Gathering => m_Wrapper.m_PlayerActionsMap_Gathering;
             public InputAction @Attacking => m_Wrapper.m_PlayerActionsMap_Attacking;
+            public InputAction @Rolling => m_Wrapper.m_PlayerActionsMap_Rolling;
             public InputActionMap Get() { return m_Wrapper.m_PlayerActionsMap; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1344,6 +1378,9 @@ namespace GinjaGaming.FinalCharacterController.Input
                 @Attacking.started += instance.OnAttacking;
                 @Attacking.performed += instance.OnAttacking;
                 @Attacking.canceled += instance.OnAttacking;
+                @Rolling.started += instance.OnRolling;
+                @Rolling.performed += instance.OnRolling;
+                @Rolling.canceled += instance.OnRolling;
             }
 
             private void UnregisterCallbacks(IPlayerActionsMapActions instance)
@@ -1354,6 +1391,9 @@ namespace GinjaGaming.FinalCharacterController.Input
                 @Attacking.started -= instance.OnAttacking;
                 @Attacking.performed -= instance.OnAttacking;
                 @Attacking.canceled -= instance.OnAttacking;
+                @Rolling.started -= instance.OnRolling;
+                @Rolling.performed -= instance.OnRolling;
+                @Rolling.canceled -= instance.OnRolling;
             }
 
             public void RemoveCallbacks(IPlayerActionsMapActions instance)
@@ -1418,6 +1458,7 @@ namespace GinjaGaming.FinalCharacterController.Input
         {
             void OnGathering(InputAction.CallbackContext context);
             void OnAttacking(InputAction.CallbackContext context);
+            void OnRolling(InputAction.CallbackContext context);
         }
     }
 }
