@@ -72,10 +72,6 @@ namespace GinjaGaming.FinalCharacterController.Input
             AttackPressed = false;
         }
 
-        public void SetRollPressedFalse()
-        {
-            RollPressed = false;
-        }
         #endregion
 
         #region Input Callbacks

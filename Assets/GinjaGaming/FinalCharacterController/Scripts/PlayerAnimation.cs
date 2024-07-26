@@ -25,6 +25,7 @@ namespace GinjaGaming.FinalCharacterController
         private static readonly int IsFallingHash = Animator.StringToHash("IsFalling");
         private static readonly int IsJumpingHash = Animator.StringToHash("IsJumping");
         private static readonly int IsRollingHash = Animator.StringToHash("IsRolling");
+        private static readonly int IsCrouchedHash = Animator.StringToHash("IsCrouched");
 
         // Actions
         private static readonly int IsAttackingHash = Animator.StringToHash("IsAttacking");
@@ -43,7 +44,7 @@ namespace GinjaGaming.FinalCharacterController
             _playerState = GetComponent<PlayerState>();
             _playerController = GetComponent<PlayerController>();
             _playerActionsInput = GetComponent<PlayerActionsInput>();
-            _actionHashes = new int[] { IsGatheringHash, IsRollingHash };
+            _actionHashes = new int[] { IsGatheringHash };
         }
 
         private void Update()
@@ -56,6 +57,9 @@ namespace GinjaGaming.FinalCharacterController
             bool isIdling = _playerState.CurrentPlayerMovementState == PlayerMovementState.Idling;
             bool isJumping = _playerState.CurrentPlayerMovementState == PlayerMovementState.Jumping;
             bool isFalling = _playerState.CurrentPlayerMovementState == PlayerMovementState.Falling;
+            bool isCrouched = _playerState.CurrentPlayerMovementState == PlayerMovementState.Crouching;
+            bool isRolling = _playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling;
+
             bool isGrounded = _playerState.InGroundedState();
             bool isPlayingAction = _actionHashes.Any(hash => animator.GetBool(hash));
 
@@ -69,7 +73,8 @@ namespace GinjaGaming.FinalCharacterController
             animator.SetBool(IsRotatingToTargetHash, _playerController.IsRotatingToTarget);
             animator.SetBool(IsAttackingHash, _playerActionsInput.AttackPressed);
             animator.SetBool(IsGatheringHash, _playerActionsInput.GatherPressed);
-            animator.SetBool(IsRollingHash, _playerActionsInput.RollPressed);
+            animator.SetBool(IsRollingHash, isRolling);
+            animator.SetBool(IsCrouchedHash, isCrouched);
             animator.SetBool(IsPlayingActionHash, isPlayingAction);
 
             animator.SetFloat(LateralSpeedHash, _currentBlendInput.x);

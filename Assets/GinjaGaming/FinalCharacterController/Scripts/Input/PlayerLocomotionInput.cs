@@ -17,7 +17,8 @@ namespace GinjaGaming.FinalCharacterController.Input
         public bool JumpPressed { get; private set; }
         public bool SprintToggledOn { get; private set; }
         public bool WalkToggledOn { get; private set; }
-
+        public bool RollPressed { get; private set; }
+        public bool CrouchToggledOn { get; private set;  }
         public InputDevice ActiveDevice { get; private set; }
 
         #endregion
@@ -55,7 +56,7 @@ namespace GinjaGaming.FinalCharacterController.Input
         private void LateUpdate()
         {
             JumpPressed = false;
-        }
+ }
         #endregion
 
         #region Input Callbacks
@@ -103,6 +104,34 @@ namespace GinjaGaming.FinalCharacterController.Input
                 return;
 
             WalkToggledOn = !WalkToggledOn;
+        }
+
+        public void OnCrouch(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+                return;
+
+            CrouchToggledOn = !CrouchToggledOn;
+        }
+
+        public void OnRoll(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+                return;
+
+            RollPressed = true;
+        }
+        #endregion
+
+        #region Animation Event methods
+        public void SetRollPressedFalse()
+        {
+            RollPressed = false;
+        }
+
+        public void SetCrouchToggleToFalse()
+        {
+            CrouchToggledOn = false;
         }
         #endregion
     }

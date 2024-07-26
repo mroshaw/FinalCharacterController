@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GinjaGaming.FinalCharacterController
@@ -20,11 +18,9 @@ namespace GinjaGaming.FinalCharacterController
 
         public bool IsStateGroundedState(PlayerMovementState movementState)
         {
-            return movementState == PlayerMovementState.Idling ||
-                   movementState == PlayerMovementState.Walking ||
-                   movementState == PlayerMovementState.Running ||
-                   movementState == PlayerMovementState.Rolling ||
-                   movementState == PlayerMovementState.Sprinting;
+            return movementState is PlayerMovementState.Idling or PlayerMovementState.Walking or
+                PlayerMovementState.Running or PlayerMovementState.Sprinting or PlayerMovementState.Rolling
+                or PlayerMovementState.Crouching;
         }
     }
     public enum PlayerMovementState
@@ -37,5 +33,6 @@ namespace GinjaGaming.FinalCharacterController
         Falling = 5,
         Strafing = 6,
         Rolling = 7,
+        Crouching = 8,
     }
 }
