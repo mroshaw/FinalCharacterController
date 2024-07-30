@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/GinjaGaming/FinalCharacterController/Scripts/Editor/InspectorWindowStyles.uss?fileID=7433441132597879392&amp;guid=1bef236dc12181f44b1991e3710952ac&amp;type=3#InspectorWindowStyles" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+        <ui:Button text="Init Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" name="InitSettingsButton" class="Button" />
+        <ui:Button text="Update" parse-escape-sequences="true" display-tooltip-when-elided="true" name="UpdateSettingsButton" />
+    </ui:VisualElement>
+</ui:UXML>

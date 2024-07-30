@@ -71,6 +71,8 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             [Header("Animation")]
             public string animMappingLabel;
             public AnimationClip animClip;
+            public bool mirrorAnimation;
+            public float animSpeed = 1.0f;
             [SerializeField] private CharacterAnimationMappingSettings.AnimTarget animTarget;
 
             public AnimMapping(CharacterAnimationMappingSettings.AnimTarget target, AnimationClip clip)
@@ -128,12 +130,12 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
 
                 if (string.IsNullOrEmpty(animTarget.blendTreeName))
                 {
-                    SetMotionInState(animatorState, animClip);
+                    SetMotionInState(animatorState);
                     return;
                 }
 
                 BlendTree blendTree = GetBlendTreeFromBlendTreeByName(animatorState.motion as BlendTree, animTarget.blendTreeName);
-                SetMotionInBlendTree(blendTree, animTarget.blendTreeIndex, animClip);
+                SetMotionInBlendTree(blendTree, animTarget.blendTreeIndex);
             }
 
             #region Animation controller helper methods
@@ -252,23 +254,23 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
                 return null;
             }
 
-            private void SetMotionInBlendTree(BlendTree blendTree, int motionIndex, AnimationClip animClip)
+            private void SetMotionInBlendTree(BlendTree blendTree, int motionIndex)
             {
                 ChildMotion[] newMotions = blendTree.children;
                 newMotions[motionIndex].motion = animClip;
+                newMotions[motionIndex].mirror = mirrorAnimation;
+                newMotions[motionIndex].timeScale = animSpeed;
                 blendTree.children = newMotions;
             }
 
-            private void SetMotionInState(AnimatorState state, AnimationClip animClip)
+            private void SetMotionInState(AnimatorState state)
             {
                 if (state.motion is BlendTree)
                 {
-
+                    return;
                 }
-                else
-                {
-                    state.motion = animClip;
-                }
+                state.motion = animClip;
+                state.mirror = mirrorAnimation;
             }
 
             private void SaveAnimatorAsset(AnimatorController animatorController)
