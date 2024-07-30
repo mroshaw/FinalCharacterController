@@ -22,6 +22,10 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
 
         public override VisualElement CreateInspectorGUI()
         {
+            if (!rootVisualElement)
+            {
+                return null;
+            }
             _inspectorTree = new VisualElement();
             rootVisualElement.CloneTree(_inspectorTree);
 

@@ -54,7 +54,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
         private void AddToLog(string logText)
         {
             _logText.value += $"{logText}\n";
-            Debug.Log("logText");
+            Debug.Log(logText);
         }
 
         private void UpdateApplyButtonState()
