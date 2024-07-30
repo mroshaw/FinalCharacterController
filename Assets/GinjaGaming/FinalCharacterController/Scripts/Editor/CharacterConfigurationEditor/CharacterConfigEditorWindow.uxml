@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/GinjaGaming/FinalCharacterController/Scripts/Editor/EditorWindowStyles.uss?fileID=7433441132597879392&amp;guid=2247bb3b8f94bad4cad9443342133477&amp;type=3#EditorWindowStyles" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:Label tabindex="-1" text="Character Configuration" parse-escape-sequences="true" display-tooltip-when-elided="true" name="WindowHeading" class="HeadingText" />
+        <ui:Label tabindex="-1" text="1. Drag your character controller game object from the scene view hierarchy:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CharGameObjectInstruction" class="InstructionText" />
+        <uie:ObjectField label="Character Game Object" type="UnityEngine.Transform, UnityEngine.CoreModule" name="CharGameObject" class="Field" />
+        <ui:Label tabindex="-1" text="2. Pick your prefedined animation settings:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AnimSettingsInstructions" class="InstructionText" />
+        <uie:ObjectField label="Animation Settings" type="GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEditor.CharacterAnimationSettings, GinjaGaming.FinalCharacterController.Editor" name="AnimSettings" class="Field" />
+        <ui:Label tabindex="-1" text="3. Click the button to apply your settings:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ApplyInstructions" class="InstructionText" />
+        <ui:Button text="Apply" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ApplyButton" class="Button" />
+        <ui:Label tabindex="-1" text="Log:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LogLabel" class="Label" />
+        <ui:ScrollView class="ScrollView">
+            <ui:VisualElement style="flex-grow: 1;">
+                <ui:TextField picking-mode="Ignore" name="LogText" class="LogText" />
+            </ui:VisualElement>
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>
