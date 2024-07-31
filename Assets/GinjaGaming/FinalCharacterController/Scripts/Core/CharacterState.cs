@@ -6,6 +6,14 @@ namespace GinjaGaming.FinalCharacterController.Core
     {
         [field: SerializeField] public CharacterMovementState CurrentCharacterMovementState { get; private set; } = CharacterMovementState.Idling;
         [field: SerializeField] public CharacterActionState CurrentCharacterActionState { get; private set; } = CharacterActionState.Idle;
+        [field: SerializeField] public CharacterHealthState CurrentCharacterHealthState { get; private set; } = CharacterHealthState.Fine;
+
+        public void ResetStates()
+        {
+            CurrentCharacterMovementState = CharacterMovementState.Idling;
+            CurrentCharacterActionState = CharacterActionState.Idle;
+            CurrentCharacterHealthState = CharacterHealthState.Fine;
+        }
 
         public void SetCharacterMovementState(CharacterMovementState characterMovementState)
         {
@@ -15,6 +23,33 @@ namespace GinjaGaming.FinalCharacterController.Core
         public void SetCharacterActionState(CharacterActionState characterActionState)
         {
             CurrentCharacterActionState = characterActionState;
+        }
+
+        public void SetCharacterHealthState(CharacterHealthState characterHealthState)
+        {
+            CurrentCharacterHealthState = characterHealthState;
+        }
+
+        public void SetCharacterInjuredState()
+        {
+            CurrentCharacterHealthState = CharacterHealthState.Injured;
+        }
+
+        public void SetCharacterDeadState()
+        {
+            CurrentCharacterMovementState = CharacterMovementState.Idling;
+            CurrentCharacterActionState = CharacterActionState.Idle;
+            CurrentCharacterHealthState = CharacterHealthState.Dead;
+        }
+
+        public void SetCharacterFineState()
+        {
+            CurrentCharacterHealthState = CharacterHealthState.Fine;
+        }
+
+        public bool InDeadState()
+        {
+            return CurrentCharacterHealthState == CharacterHealthState.Dead;
         }
 
         public bool InGroundedState()
@@ -72,5 +107,12 @@ namespace GinjaGaming.FinalCharacterController.Core
         Idle = 0,
         Attacking = 1,
         Gathering = 2,
+    }
+
+    public enum CharacterHealthState
+    {
+        Fine = 0,
+        Injured = 1,
+        Dead = 2,
     }
 }

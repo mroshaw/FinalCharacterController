@@ -1,0 +1,473 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b6eadbd399063240bb4cd065fef69a5, type: 3}
+  m_Name: FinalController - Male Animations
+  m_EditorClassIdentifier: 
+  mappingSettings: {fileID: 11400000, guid: 6222fc6d38ae6d349b903584bc46b760, type: 2}
+  animMappings:
+  - animMappingLabel: Attack/Unarmed Melee Attack
+    animClip: {fileID: 7400000, guid: bb37c151aa8956841a30a9cf8fc5d335, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Attack
+      animationName: Unarmed Melee Attack
+      stateName: PunchRight
+      stateMachineName: 
+      layerName: Upper Body
+      blendTreeName: 
+      blendTreeIndex: 0
+  - animMappingLabel: Actions/Gathering
+    animClip: {fileID: 7400000, guid: 0a5b023fea0d8404ab5040de2780cd8f, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Actions
+      animationName: Gathering
+      stateName: Gathering
+      stateMachineName: Actions (cancellable)
+      layerName: Base Layer
+      blendTreeName: 
+      blendTreeIndex: 0
+  - animMappingLabel: Actions/Rolling
+    animClip: {fileID: 7400000, guid: 4f40922fa4f66bc4fbc281d0cd575187, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Actions
+      animationName: Rolling
+      stateName: Rolling
+      stateMachineName: Actions
+      layerName: Base Layer
+      blendTreeName: 
+      blendTreeIndex: 0
+  - animMappingLabel: Jumping/Falling/Falling Down
+    animClip: {fileID: 2010763096457517216, guid: 988fefd40c70c4243ac399fce021190a,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Jumping/Falling
+      animationName: Falling Down
+      stateName: Falling Blend Tree
+      stateMachineName: Locomotion
+      layerName: Base Layer
+      blendTreeName: Falling
+      blendTreeIndex: 0
+  - animMappingLabel: Jumping/Falling/Falling Left
+    animClip: {fileID: 2010763096457517216, guid: 988fefd40c70c4243ac399fce021190a,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Jumping/Falling
+      animationName: Falling Left
+      stateName: Falling Blend Tree
+      stateMachineName: Locomotion
+      layerName: Base Layer
+      blendTreeName: Falling
+      blendTreeIndex: 1
+  - animMappingLabel: Jumping/Falling/Falling Right
+    animClip: {fileID: 2010763096457517216, guid: 988fefd40c70c4243ac399fce021190a,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Jumping/Falling
+      animationName: Falling Right
+      stateName: Falling Blend Tree
+      stateMachineName: Locomotion
+      layerName: Base Layer
+      blendTreeName: Falling
+      blendTreeIndex: 2
+  - animMappingLabel: Jumping/Falling/Jump Up
+    animClip: {fileID: 7400000, guid: c7af013c5e510a045aa03fdf55b40eac, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Jumping/Falling
+      animationName: Jump Up
+      stateName: Jump Up Blend Tree
+      stateMachineName: Locomotion
+      layerName: Base Layer
+      blendTreeName: Jump Up
+      blendTreeIndex: 0
+  - animMappingLabel: Jumping/Falling/Jump Forward
+    animClip: {fileID: 7400000, guid: c7af013c5e510a045aa03fdf55b40eac, type: 2}
+    mirrorAnimation: 1
+    animSpeed: 1
+    animTarget:
+      animationHeader: Jumping/Falling
+      animationName: Jump Forward
+      stateName: Jump Up Blend Tree
+      stateMachineName: Locomotion
+      layerName: Base Layer
+      blendTreeName: Jump Up
+      blendTreeIndex: 1
+  - animMappingLabel: Jumping/Falling/Jump Left
+    animClip: {fileID: 7400000, guid: 67f9e53f8f4d5c0428583a021c2723b3, type: 2}
+    mirrorAnimation: 1
+    animSpeed: 1
+    animTarget:
+      animationHeader: Jumping/Falling
+      animationName: Jump Left
+      stateName: Jump Up Blend Tree
+      stateMachineName: Locomotion
+      layerName: Base Layer
+      blendTreeName: Jump Up
+      blendTreeIndex: 2
+  - animMappingLabel: Jumping/Falling/Jump Right
+    animClip: {fileID: 7400000, guid: 67f9e53f8f4d5c0428583a021c2723b3, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Jumping/Falling
+      animationName: Jump Right
+      stateName: Jump Up Blend Tree
+      stateMachineName: Locomotion
+      layerName: Base Layer
+      blendTreeName: Jump Up
+      blendTreeIndex: 3
+  - animMappingLabel: Movement/Turn 90 Left
+    animClip: {fileID: 7400000, guid: d0bf1e4a64972aa4e9e2730f5888bf31, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement
+      animationName: Turn 90 Left
+      stateName: Turn 90 L
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: 
+      blendTreeIndex: 2
+  - animMappingLabel: Movement/Turn 90 Right
+    animClip: {fileID: 7400000, guid: 299b0087005392a46b66b6c5977c48dd, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement
+      animationName: Turn 90 Right
+      stateName: Turn 90 R
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: 
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Idle/Idle
+    animClip: {fileID: -6206981513316247533, guid: c346a9e2503cda64ba4698db6aa5e707,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Idle
+      animationName: Idle
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Idle
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Idle/Idle Rotate Left
+    animClip: {fileID: 7400000, guid: d0bf1e4a64972aa4e9e2730f5888bf31, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Idle
+      animationName: Idle Rotate Left
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Idle
+      blendTreeIndex: 1
+  - animMappingLabel: Movement - Idle/Idle Rotate Right
+    animClip: {fileID: 7400000, guid: 299b0087005392a46b66b6c5977c48dd, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Idle
+      animationName: Idle Rotate Right
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Idle
+      blendTreeIndex: 2
+  - animMappingLabel: Movement - Walking/Walk Backwards
+    animClip: {fileID: 7764034356917647397, guid: 13868b4eb0d3b8a49a77cc4989b9a3de,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Walking
+      animationName: Walk Backwards
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Backwards
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Walking/Walk Back Left
+    animClip: {fileID: 7764034356917647397, guid: 13868b4eb0d3b8a49a77cc4989b9a3de,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Walking
+      animationName: Walk Back Left
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Backwards
+      blendTreeIndex: 1
+  - animMappingLabel: Movement - Walking/Walk Back Right
+    animClip: {fileID: 7764034356917647397, guid: 13868b4eb0d3b8a49a77cc4989b9a3de,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Walking
+      animationName: Walk Back Right
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Backwards
+      blendTreeIndex: 2
+  - animMappingLabel: Movement - Walking/Walk Idle
+    animClip: {fileID: -6206981513316247533, guid: c346a9e2503cda64ba4698db6aa5e707,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Walking
+      animationName: Walk Idle
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Walking
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Walking/Walk Forward
+    animClip: {fileID: 7400000, guid: 950d2eadc133e3a40b32bbc9bd3d31be, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Walking
+      animationName: Walk Forward
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Walking
+      blendTreeIndex: 1
+  - animMappingLabel: Movement - Walking/Walk Left
+    animClip: {fileID: 7400000, guid: 592bbde5c7ef0704eb3a7c646a711867, type: 2}
+    mirrorAnimation: 1
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Walking
+      animationName: Walk Left
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Walking
+      blendTreeIndex: 2
+  - animMappingLabel: Movement - Walking/Walk Right
+    animClip: {fileID: 7400000, guid: 592bbde5c7ef0704eb3a7c646a711867, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Walking
+      animationName: Walk Right
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Walking
+      blendTreeIndex: 3
+  - animMappingLabel: Movement - Running/Run Idle
+    animClip: {fileID: -6206981513316247533, guid: c346a9e2503cda64ba4698db6aa5e707,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Running
+      animationName: Run Idle
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Run
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Running/Run Forward
+    animClip: {fileID: 5987713911036300057, guid: 081930da5e255e348940373200bbeaca,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Running
+      animationName: Run Forward
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Run
+      blendTreeIndex: 1
+  - animMappingLabel: Movement - Running/Right Left
+    animClip: {fileID: -4630368382552359268, guid: 5120a970404f418419c83af871d9a022,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Running
+      animationName: Right Left
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Run
+      blendTreeIndex: 2
+  - animMappingLabel: Movement - Running/Right Run
+    animClip: {fileID: -4630368382552359268, guid: 5120a970404f418419c83af871d9a022,
+      type: 3}
+    mirrorAnimation: 1
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Running
+      animationName: Right Run
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Run
+      blendTreeIndex: 3
+  - animMappingLabel: Movement - Running/Sprint Idle
+    animClip: {fileID: -6206981513316247533, guid: c346a9e2503cda64ba4698db6aa5e707,
+      type: 3}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Running
+      animationName: Sprint Idle
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Sprint
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Running/Sprint Forward
+    animClip: {fileID: 7400000, guid: 911376291a72a4249acadf03d701ec9c, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Running
+      animationName: Sprint Forward
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Sprint
+      blendTreeIndex: 1
+  - animMappingLabel: Movement - Running/Sprint Left
+    animClip: {fileID: 7400000, guid: 10a6bec053225c54489274e5daaf814b, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Running
+      animationName: Sprint Left
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Sprint
+      blendTreeIndex: 2
+  - animMappingLabel: Movement - Running/Sprint Right
+    animClip: {fileID: 7400000, guid: 10a6bec053225c54489274e5daaf814b, type: 2}
+    mirrorAnimation: 1
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Running
+      animationName: Sprint Right
+      stateName: Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Sprint
+      blendTreeIndex: 3
+  - animMappingLabel: Movement - Crouched/Turn 90 Left Crouched
+    animClip: {fileID: 7400000, guid: 327fb7b1b46a8bc42876e30d9d2384a6, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Crouched
+      animationName: Turn 90 Left Crouched
+      stateName: Turn 90 L Crouched
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: 
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Crouched/Turn 90 Right Crouched
+    animClip: {fileID: 7400000, guid: 327fb7b1b46a8bc42876e30d9d2384a6, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Crouched
+      animationName: Turn 90 Right Crouched
+      stateName: Turn 90 R Crouched
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: 
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Crouched/Crouched Idle
+    animClip: {fileID: 7400000, guid: 16dc2dad34d0bfd4791ccda99bea7307, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Crouched
+      animationName: Crouched Idle
+      stateName: Crouched Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Crouched
+      blendTreeIndex: 0
+  - animMappingLabel: Movement - Crouched/Crouch Forward
+    animClip: {fileID: 7400000, guid: 327fb7b1b46a8bc42876e30d9d2384a6, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Crouched
+      animationName: Crouch Forward
+      stateName: Crouched Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Crouched
+      blendTreeIndex: 1
+  - animMappingLabel: Movement - Crouched/Crouch Left
+    animClip: {fileID: 7400000, guid: 327fb7b1b46a8bc42876e30d9d2384a6, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Crouched
+      animationName: Crouch Left
+      stateName: Crouched Locomotion Blend
+      stateMachineName: Movement
+      layerName: Base Layer
+      blendTreeName: Crouched
+      blendTreeIndex: 2
+  - animMappingLabel: Movement - Crouched/Crouch Right
+    animClip: {fileID: 7400000, guid: 327fb7b1b46a8bc42876e30d9d2384a6, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Movement - Crouched
+      animationName: Crouch Right
+      stateName: Jump Up Blend Tree
+      stateMachineName: Crouched Locomotion Blend
+      layerName: Movement
+      blendTreeName: Crouched
+      blendTreeIndex: 3
+  - animMappingLabel: Other/Death
+    animClip: {fileID: 7400000, guid: 647156813636b2d41b458955ab518e56, type: 2}
+    mirrorAnimation: 0
+    animSpeed: 1
+    animTarget:
+      animationHeader: Other
+      animationName: Death
+      stateName: Dead
+      stateMachineName: 
+      layerName: Base Layer
+      blendTreeName: 
+      blendTreeIndex: 0

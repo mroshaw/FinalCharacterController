@@ -29,6 +29,10 @@ namespace GinjaGaming.FinalCharacterController.Core
         private static readonly int IsPlayingActionHash = Animator.StringToHash("IsPlayingAction");
         private int[] _actionHashes;
 
+        // Health State
+        private static readonly int IsInjured = Animator.StringToHash("IsInjured");
+        private static readonly int IsDead = Animator.StringToHash("IsDead");
+
         // Camera/Rotation
         private static readonly int IsRotatingToTargetHash = Animator.StringToHash("IsRotatingToTarget");
         private static readonly int RotationMismatchHash = Animator.StringToHash("RotationMismatch");
@@ -61,8 +65,14 @@ namespace GinjaGaming.FinalCharacterController.Core
             bool isGrounded = _characterState.InGroundedState();
             bool isPlayingAction = _actionHashes.Any(hash => animator.GetBool(hash));
 
+            bool isInjured = _characterState.CurrentCharacterHealthState == CharacterHealthState.Injured;
+            bool isDead = _characterState.CurrentCharacterHealthState == CharacterHealthState.Dead;
+
             Vector3 inputTarget = new Vector3(_characterController.LateralSpeed, _characterController.VerticalSpeed, _characterController.ForwardSpeed);
             _currentBlendInput = Vector3.Lerp(_currentBlendInput, inputTarget, locomotionBlendSpeed * Time.deltaTime);
+
+            animator.SetBool(IsInjured, isInjured);
+            animator.SetBool(IsDead, isDead);
 
             animator.SetBool(IsGroundedHash, isGrounded);
             animator.SetBool(IsIdlingHash, isIdling);

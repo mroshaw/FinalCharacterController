@@ -62,7 +62,7 @@ namespace GinjaGaming.FinalCharacterController.Core
             return false;
         }
 
-        public abstract void TriggerEnter(Collider other);
-        public abstract void TriggerExit(Collider other);
+        protected abstract void TriggerEnter(Collider other);
+        protected abstract void TriggerExit(Collider other);
     }
 }

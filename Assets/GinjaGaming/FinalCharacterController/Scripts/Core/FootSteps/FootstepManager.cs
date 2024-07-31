@@ -98,16 +98,22 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
 
         private bool FindMaterialTextureFromCollider(Collider other, out string textureName)
         {
-            textureName = "";
+            if (other.isTrigger)
+            {
+                textureName = "";
+                return false;
+            }
 
             MeshRenderer meshRender = other.GetComponent<MeshRenderer>();
             if (!meshRender)
             {
+                textureName = "";
                 return false;
             }
             Material meshMaterial = meshRender.material;
             if (!meshMaterial)
             {
+                textureName = "";
                 return false;
             }
             textureName = meshMaterial.mainTexture.name;

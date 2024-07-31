@@ -198,24 +198,25 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
 
             _cameraRotation.x += lookSenseH * lookInputX;
             _cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSenseV * lookInputY, -lookLimitV, lookLimitV);
-
             _playerTargetRotation.x += transform.eulerAngles.x + lookSenseH * lookInputX;
 
             float rotationTolerance = 90f;
             bool isIdling = CharacterState.CurrentCharacterMovementState == CharacterMovementState.Idling;
             IsRotatingToTarget = RotatingToTargetTimer > 0;
 
-            // ROTATE if we're not idling
-            if (!isIdling)
+            if (!CharacterState.InDeadState())
             {
-                RotatePlayerToTarget();
+                // ROTATE if we're not idling
+                if (!isIdling)
+                {
+                    RotatePlayerToTarget();
+                }
+                // If rotation mismatch not within tolerance, or rotate to target is active, ROTATE
+                else if (Mathf.Abs(RotationMismatch) > rotationTolerance || IsRotatingToTarget)
+                {
+                    UpdateIdleRotation(rotationTolerance);
+                }
             }
-            // If rotation mismatch not within tolerance, or rotate to target is active, ROTATE
-            else if (Mathf.Abs(RotationMismatch) > rotationTolerance || IsRotatingToTarget)
-            {
-                UpdateIdleRotation(rotationTolerance);
-            }
-
             _playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f);
 
             // Get angle between camera and player

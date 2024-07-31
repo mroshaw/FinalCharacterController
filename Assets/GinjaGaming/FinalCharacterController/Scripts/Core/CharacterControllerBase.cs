@@ -125,7 +125,10 @@ namespace GinjaGaming.FinalCharacterController.Core
             newVelocity = !CharacterState.InGroundedState() ? HandleSteepWalls(newVelocity) : newVelocity;
 
             // Move character (Unity suggests only calling this once per tick)
-            characterController.Move(newVelocity * Time.deltaTime);
+            if (!CharacterState.InDeadState())
+            {
+                characterController.Move(newVelocity * Time.deltaTime);
+            }
         }
 
         protected abstract Vector3 GetMovementDirection();

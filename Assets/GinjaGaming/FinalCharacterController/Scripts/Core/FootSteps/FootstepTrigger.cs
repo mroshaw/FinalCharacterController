@@ -23,7 +23,8 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
         #endregion
 
         #region Class methods
-        public override void TriggerEnter(Collider other)
+
+        protected override void TriggerEnter(Collider other)
         {
             FootstepManager.GetSurfaceFromCollision(transform, other, out FootstepSurface footstepSurface,
                 out Vector3 spawnPosition);
@@ -48,7 +49,7 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
             _audioSource.PlayOneShot(audioClip);
         }
 
-        public override void TriggerExit(Collider other)
+        protected override void TriggerExit(Collider other)
         {
         }
         #endregion

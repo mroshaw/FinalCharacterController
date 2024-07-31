@@ -266,3 +266,10 @@ MonoBehaviour:
     layerName: Base Layer
     blendTreeName: Crouched
     blendTreeIndex: 3
+  - animationHeader: Other
+    animationName: Death
+    stateName: Dead
+    stateMachineName: 
+    layerName: Base Layer
+    blendTreeName: 
+    blendTreeIndex: 0

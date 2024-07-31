@@ -15,6 +15,7 @@ namespace GinjaGaming.FinalCharacterController.Core
         [SerializeField] private AudioClip[] attackShortAudioClips;
         [SerializeField] private AudioClip[] painAudioClips;
         [SerializeField] private AudioClip[] deathAudioClips;
+        [SerializeField] private AudioClip[] reliefAudioClips;
 
         [Header("Environment Audio Settings")]
         [SerializeField] private AudioClip[] groundThudAudioClips;
@@ -39,6 +40,11 @@ namespace GinjaGaming.FinalCharacterController.Core
         public void PlayEffortAudio()
         {
             _audioSource.PlayOneShot(GetRandomAudioClip(effortAudioClips));
+        }
+
+        public void PlayReliefAudio()
+        {
+            _audioSource.PlayOneShot(GetRandomAudioClip(reliefAudioClips));
         }
 
         public void PlayHitAudio()
