@@ -36,7 +36,6 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
         #endregion
 
         #region Update Logic
-
         public override void Update()
         {
             UpdateActionState();
@@ -178,15 +177,13 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
         #endregion
 
         #region Late Update Logic
-
-        public override void LateUpdate()
+        private void LateUpdate()
         {
-            base.LateUpdate();
+            UpdateCameraRotation();
         }
 
-        protected override void UpdateCameraRotation()
+        private void UpdateCameraRotation()
         {
-            base.UpdateCameraRotation();
             float lookInputX = _playerLocomotionInput.LookInput.x;
             float lookInputY = _playerLocomotionInput.LookInput.y;
 

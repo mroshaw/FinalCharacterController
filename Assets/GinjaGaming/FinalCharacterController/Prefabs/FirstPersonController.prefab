@@ -4020,6 +4020,7 @@ GameObject:
   - component: {fileID: 7420151794519652123}
   - component: {fileID: 4035399455588248611}
   - component: {fileID: 1733940796933841422}
+  - component: {fileID: 4155199226394429596}
   m_Layer: 6
   m_Name: FirstPersonController
   m_TagString: Untagged
@@ -4056,7 +4057,7 @@ Animator:
   m_GameObject: {fileID: 5490972504386450151}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: de13a7420582ded45a8d7d3f96889aca, type: 3}
-  m_Controller: {fileID: 9100000, guid: 28749d1f2575e94468e3665d8ad9e187, type: 2}
+  m_Controller: {fileID: 9100000, guid: ea442d68f733d1d4fa4fafdaaeef2fa5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -4105,14 +4106,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19bdf25b8aaee6f4eb5183b1290dacea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterController: {fileID: 5091083363032703001}
-  _playerCamera: {fileID: 3557077576370855240}
+  characterController: {fileID: 5091083363032703001}
   walkAcceleration: 25
   walkSpeed: 2
   runAcceleration: 35
   runSpeed: 4
   sprintAcceleration: 50
   sprintSpeed: 7
+  crouchAcceleration: 15
+  crouchSpeed: 1.2
+  rollingAcceleration: 25
+  rollingSpeed: 2.5
   inAirAcceleration: 25
   drag: 20
   inAirDrag: 10
@@ -4122,16 +4126,16 @@ MonoBehaviour:
   movingThreshold: 0.01
   playerModelRotationSpeed: 10
   rotateToTargetTime: 0.68
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  _playerCamera: {fileID: 3557077576370855240}
   lookSenseH: 0.1
   lookSenseV: 0.1
   lookLimitV: 70
   gamepadLookXMultiplier: 5
   gamepadLookYMultiplier: 5
   gamepadMoveRunThreshold: 0.5
-  gamepadMoveSprintThreshold: 0.8
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 1
 --- !u!114 &2715700542686990342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4158,7 +4162,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df51a1f55ede10459f5411060f1667f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CurrentPlayerMovementState>k__BackingField: 0
+  <CurrentCharacterMovementState>k__BackingField: 0
+  <CurrentCharacterActionState>k__BackingField: 0
+  <CurrentCharacterHealthState>k__BackingField: 0
 --- !u!114 &20902183644189635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4382,8 +4388,112 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5c374077ce1f5b0499cb38c91dce18f3, type: 3}
   - {fileID: 8300000, guid: 2a928fbf731f3c544864e44d590c5d45, type: 3}
   - {fileID: 8300000, guid: 48e785eff542272488dc972508cbc56a, type: 3}
+  reliefAudioClips:
+  - {fileID: 8300000, guid: 6cc80b08bae3b044cb3e1a9dbdf064f0, type: 3}
+  - {fileID: 8300000, guid: a0a55182655772642897548e3c643a61, type: 3}
+  - {fileID: 8300000, guid: a37d11dad13843c47a2927a0f87f1601, type: 3}
+  - {fileID: 8300000, guid: 1f32196c5f55f1449acb03dceaac34ee, type: 3}
+  - {fileID: 8300000, guid: 9326ca925e1b6b348a1706a846d81be3, type: 3}
+  - {fileID: 8300000, guid: 7036e7922fc64b04f9c7f6d99bcd684c, type: 3}
   groundThudAudioClips:
   - {fileID: 8300000, guid: 7a4631d1e185def43a2d983f0b338eeb, type: 3}
+--- !u!114 &4155199226394429596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5490972504386450151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f8539878ebd24f4aadf98d83bfc04b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  startingHealth: 100
+  delayHealthGoneTriggerWait: 5
+  _currentHealth: 0
+  _isDead: 0
+  healthChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  healthDecreasedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1733940796933841422}
+        m_TargetAssemblyTypeName: GinjaGaming.FinalCharacterController.Core.CharacterAudio,
+          GinjaGaming.FinalCharacterController.Core
+        m_MethodName: PlayPainAudio
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  healthIncreasedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1733940796933841422}
+        m_TargetAssemblyTypeName: GinjaGaming.FinalCharacterController.Core.CharacterAudio,
+          GinjaGaming.FinalCharacterController.Core
+        m_MethodName: PlayReliefAudio
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  healthGoneEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1733940796933841422}
+        m_TargetAssemblyTypeName: GinjaGaming.FinalCharacterController.Core.CharacterAudio,
+          GinjaGaming.FinalCharacterController.Core
+        m_MethodName: PlayDeathAudio
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  healthGoneDelayedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4155199226394429596}
+        m_TargetAssemblyTypeName: GinjaGaming.FinalCharacterController.Core.CharacterHealth,
+          GinjaGaming.FinalCharacterController.Core
+        m_MethodName: ResetHealth
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8018661228803342238}
+        m_TargetAssemblyTypeName: GinjaGaming.FinalCharacterController.Core.CharacterState,
+          GinjaGaming.FinalCharacterController.Core
+        m_MethodName: ResetStates
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5551917237833372909
 GameObject:
   m_ObjectHideFlags: 0

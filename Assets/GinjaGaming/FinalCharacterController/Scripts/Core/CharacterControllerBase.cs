@@ -148,17 +148,6 @@ namespace GinjaGaming.FinalCharacterController.Core
         #endregion
 
         #region Late Update Logic
-
-        public virtual void LateUpdate()
-        {
-            UpdateCameraRotation();
-        }
-
-        protected virtual void UpdateCameraRotation()
-        {
-
-        }
-
         protected virtual void UpdateIdleRotation(float rotationTolerance)
         {
             // Initiate new rotation direction

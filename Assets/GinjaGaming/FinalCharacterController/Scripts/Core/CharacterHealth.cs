@@ -33,6 +33,10 @@ namespace GinjaGaming.FinalCharacterController.Core
 
         #region Class Methods
 
+        public void ResetHealth()
+        {
+            _currentHealth = startingHealth;
+        }
         public void ModifyHealth(float healthAmount)
         {
             if (healthAmount > 0)
