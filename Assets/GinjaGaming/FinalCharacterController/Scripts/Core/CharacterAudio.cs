@@ -1,9 +1,9 @@
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController
+namespace GinjaGaming.FinalCharacterController.Core
 {
     [RequireComponent(typeof(AudioSource))]
-    public class PlayerAudio : MonoBehaviour
+    public class CharacterAudio : MonoBehaviour
     {
         #region Class Variables
 

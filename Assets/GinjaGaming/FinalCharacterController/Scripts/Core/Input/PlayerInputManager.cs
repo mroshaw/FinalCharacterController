@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController.Input
+namespace GinjaGaming.FinalCharacterController.Core.Input
 {
     [DefaultExecutionOrder(-3)]
     public class PlayerInputManager : MonoBehaviour

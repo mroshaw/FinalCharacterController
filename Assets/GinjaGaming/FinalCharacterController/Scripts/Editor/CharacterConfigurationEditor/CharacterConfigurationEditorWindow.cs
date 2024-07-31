@@ -16,7 +16,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
         private Button _applyButton;
         private TextField _logText;
 
-        [MenuItem("Final Character Controller/Character Configuration Window")]
+        [MenuItem("Window/Final Character Controller/Character Configuration Window")]
         public static void ShowWindow()
         {
             CharacterConfigurationEditorWindow charEditorWindow = GetWindow<CharacterConfigurationEditorWindow>();

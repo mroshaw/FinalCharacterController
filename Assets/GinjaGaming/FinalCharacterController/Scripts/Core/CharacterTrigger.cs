@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace GinjaGaming.FinalCharacterController
+namespace GinjaGaming.FinalCharacterController.Core
 {
     public abstract class CharacterTrigger : MonoBehaviour
     {

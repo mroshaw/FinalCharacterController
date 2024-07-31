@@ -1,20 +1,16 @@
 using System.Linq;
-using GinjaGaming.FinalCharacterController.Input;
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController
+namespace GinjaGaming.FinalCharacterController.Core
 {
-    public class PlayerAnimation : MonoBehaviour
+    public class CharacterAnimation : MonoBehaviour
     {
         [Header("Animation Settings")]
         [SerializeField] private Animator animator;
         [SerializeField] private float locomotionBlendSpeed = 4f;
 
-        public bool RollingAnimIsPlaying { get; set; }
-
-        private PlayerState _playerState;
-        private PlayerController _playerController;
-        private PlayerActionsInput _playerActionsInput;
+        private CharacterState _characterState;
+        private CharacterControllerBase _characterController;
 
         // Locomotion
         private static readonly int LateralSpeedHash = Animator.StringToHash("LateralSpeed");
@@ -41,9 +37,8 @@ namespace GinjaGaming.FinalCharacterController
 
         private void Awake()
         {
-            _playerState = GetComponent<PlayerState>();
-            _playerController = GetComponent<PlayerController>();
-            _playerActionsInput = GetComponent<PlayerActionsInput>();
+            _characterState = GetComponent<CharacterState>();
+            _characterController = GetComponent<CharacterControllerBase>();
             _actionHashes = new int[] { IsGatheringHash };
         }
 
@@ -54,25 +49,30 @@ namespace GinjaGaming.FinalCharacterController
 
         private void UpdateAnimationState()
         {
-            bool isIdling = _playerState.CurrentPlayerMovementState == PlayerMovementState.Idling;
-            bool isJumping = _playerState.CurrentPlayerMovementState == PlayerMovementState.Jumping;
-            bool isFalling = _playerState.CurrentPlayerMovementState == PlayerMovementState.Falling;
-            bool isCrouched = _playerState.CurrentPlayerMovementState == PlayerMovementState.Crouching;
-            bool isRolling = _playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling;
+            bool isIdling = _characterState.CurrentCharacterMovementState == CharacterMovementState.Idling;
+            bool isJumping = _characterState.CurrentCharacterMovementState == CharacterMovementState.Jumping;
+            bool isFalling = _characterState.CurrentCharacterMovementState == CharacterMovementState.Falling;
+            bool isCrouched = _characterState.CurrentCharacterMovementState == CharacterMovementState.Crouching;
+            bool isRolling = _characterState.CurrentCharacterMovementState == CharacterMovementState.Rolling;
 
-            bool isGrounded = _playerState.InGroundedState();
+            bool isAttacking = _characterState.CurrentCharacterActionState == CharacterActionState.Attacking;
+            bool isGathering = _characterState.CurrentCharacterActionState == CharacterActionState.Gathering;
+
+            bool isGrounded = _characterState.InGroundedState();
             bool isPlayingAction = _actionHashes.Any(hash => animator.GetBool(hash));
 
-            Vector3 inputTarget = new Vector3(_playerController.LateralSpeed, _playerController.VerticalSpeed, _playerController.ForwardSpeed);
+            Vector3 inputTarget = new Vector3(_characterController.LateralSpeed, _characterController.VerticalSpeed, _characterController.ForwardSpeed);
             _currentBlendInput = Vector3.Lerp(_currentBlendInput, inputTarget, locomotionBlendSpeed * Time.deltaTime);
 
             animator.SetBool(IsGroundedHash, isGrounded);
             animator.SetBool(IsIdlingHash, isIdling);
             animator.SetBool(IsFallingHash, isFalling);
             animator.SetBool(IsJumpingHash, isJumping);
-            animator.SetBool(IsRotatingToTargetHash, _playerController.IsRotatingToTarget);
-            animator.SetBool(IsAttackingHash, _playerActionsInput.AttackPressed);
-            animator.SetBool(IsGatheringHash, _playerActionsInput.GatherPressed);
+            animator.SetBool(IsRotatingToTargetHash, _characterController.IsRotatingToTarget);
+
+            animator.SetBool(IsAttackingHash, isAttacking);
+            animator.SetBool(IsGatheringHash, isGathering);
+
             animator.SetBool(IsRollingHash, isRolling);
             animator.SetBool(IsCrouchedHash, isCrouched);
             animator.SetBool(IsPlayingActionHash, isPlayingAction);
@@ -80,7 +80,7 @@ namespace GinjaGaming.FinalCharacterController
             animator.SetFloat(LateralSpeedHash, _currentBlendInput.x);
             animator.SetFloat(ForwardSpeedHash, _currentBlendInput.z);
             animator.SetFloat(VerticalSpeedHash, _currentBlendInput.y);
-            animator.SetFloat(RotationMismatchHash, _playerController.RotationMismatch);
+            animator.SetFloat(RotationMismatchHash, _characterController.RotationMismatch);
         }
     }
 }

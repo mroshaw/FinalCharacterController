@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController.FootSteps
+namespace GinjaGaming.FinalCharacterController.Core.FootSteps
 {
     public class FootstepManager : MonoBehaviour
     {

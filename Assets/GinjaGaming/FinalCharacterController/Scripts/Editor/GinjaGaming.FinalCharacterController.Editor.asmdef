@@ -1,8 +1,12 @@
 {
     "name": "GinjaGaming.FinalCharacterController.Editor",
     "rootNamespace": "GinjaGaming.FinalCharacterController.Editor",
-    "references": [],
-    "includePlatforms": [],
+    "references": [
+        "GUID:84909239b084d744ab8f944dd1bcd6cb"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

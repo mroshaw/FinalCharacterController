@@ -1,15 +1,14 @@
-using log4net.Appender;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace GinjaGaming.FinalCharacterController.Input
+namespace GinjaGaming.FinalCharacterController.Core.Input
 {
     [DefaultExecutionOrder(-2)]
     public class PlayerActionsInput : MonoBehaviour, PlayerControls.IPlayerActionsMapActions
     {
         #region Class Variables
         private PlayerLocomotionInput _playerLocomotionInput;
-        private PlayerState _playerState;
+        private CharacterState _characterState;
         public bool GatherPressed { get; private set; }
         public bool AttackPressed { get; private set; }
         public bool RollPressed { get; private set; }
@@ -19,7 +18,7 @@ namespace GinjaGaming.FinalCharacterController.Input
         private void Awake()
         {
             _playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
-            _playerState = GetComponent<PlayerState>();
+            _characterState = GetComponent<CharacterState>();
         }
         private void OnEnable()
         {
@@ -50,13 +49,13 @@ namespace GinjaGaming.FinalCharacterController.Input
         private void Update()
         {
             if (_playerLocomotionInput.MovementInput != Vector2.zero ||
-                _playerState.CurrentPlayerMovementState == PlayerMovementState.Jumping ||
-                _playerState.CurrentPlayerMovementState == PlayerMovementState.Falling)
+                _characterState.CurrentCharacterMovementState == CharacterMovementState.Jumping ||
+                _characterState.CurrentCharacterMovementState == CharacterMovementState.Falling)
             {
                 GatherPressed = false;
             }
 
-            if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Falling)
+            if(_characterState.CurrentCharacterMovementState == CharacterMovementState.Falling)
             {
                 RollPressed = false;
             }

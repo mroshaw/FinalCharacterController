@@ -1,9 +1,9 @@
 
-using GinjaGaming.FinalCharacterController.Input;
+using GinjaGaming.FinalCharacterController.Core.Input;
 using Unity.Cinemachine;
 using UnityEngine;
 
-namespace DaftAppleGames.Darskerry.Core.DagCharacterController
+namespace GinjaGaming.FinalCharacterController.Core.Player
 {
     [DefaultExecutionOrder(-1)]
     public class ThirdPersonCameraController : MonoBehaviour

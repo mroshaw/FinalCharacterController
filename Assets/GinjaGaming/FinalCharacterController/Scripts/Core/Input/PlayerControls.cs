@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace GinjaGaming.FinalCharacterController.Input
+namespace GinjaGaming.FinalCharacterController.Core.Input
 {
     public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {

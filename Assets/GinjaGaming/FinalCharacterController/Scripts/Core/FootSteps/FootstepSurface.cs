@@ -1,9 +1,9 @@
 using System.Linq;
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController.FootSteps
+namespace GinjaGaming.FinalCharacterController.Core.FootSteps
 {
-    [CreateAssetMenu(fileName = "FootstepSurface", menuName = "Footsteps/Foot Step Surface", order = 1)]
+    [CreateAssetMenu(fileName = "FootstepSurface", menuName = "Final Character Controller/Foot Step Surface", order = 1)]
     public class FootstepSurface : ScriptableObject
     {
         #region Class Variables
