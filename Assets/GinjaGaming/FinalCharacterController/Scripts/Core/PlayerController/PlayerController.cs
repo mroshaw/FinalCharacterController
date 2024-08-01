@@ -9,7 +9,7 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
     {
         #region Class Variables
         [Header("Camera Settings")]
-        [SerializeField] private Camera _playerCamera;
+        [SerializeField] private Camera playerCamera;
         public float lookSenseH = 0.1f;
         public float lookSenseV = 0.1f;
         public float lookLimitV = 89f;
@@ -21,9 +21,8 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
 
         private PlayerLocomotionInput _playerLocomotionInput;
         private PlayerActionsInput _playerActionInput;
-
         private Vector2 _cameraRotation = Vector2.zero;
-        private Vector2 _playerTargetRotation = Vector2.zero;
+
         #endregion
 
         #region Startup
@@ -42,11 +41,10 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
             base.Update();
         }
 
-        protected override void UpdateCharacterVelocities()
-        {
-            base.UpdateCharacterVelocities();
-        }
-
+        /// <summary>
+        /// This is the 'Player Action' state machine. This controls what actions the player can and will perform,
+        /// based on current action states, and from and to permitted action states.
+        /// </summary>
         protected override void UpdateActionState()
         {
             if (_playerActionInput.AttackPressed)
@@ -66,6 +64,10 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
             }
         }
 
+        /// <summary>
+        /// This is the 'Player Movement' state machine. This method therefore controls what state the player is in, and from
+        /// and to which states the player transitions, typically based on input received.
+        /// </summary>
         protected override void UpdateMovementState()
         {
             // Process player input
@@ -93,8 +95,6 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
 
             LastMovementState = CharacterState.CurrentCharacterMovementState;
 
-            bool isGrounded = IsGrounded();
-
             CharacterMovementState lateralState = isRolling ? CharacterMovementState.Rolling :
                 isCrouching ? CharacterMovementState.Crouching :
                 isWalking ? CharacterMovementState.Walking :
@@ -103,33 +103,14 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
 
             CharacterState.SetCharacterMovementState(lateralState);
 
-            // Control Airborne State
-            if ((!isGrounded || JumpedLastFrame) && CharacterController.velocity.y > 0.0f)
-            {
-                CharacterState.SetCharacterMovementState(CharacterMovementState.Jumping);
-                JumpedLastFrame = false;
-                CharacterController.stepOffset = 0f;
-            }
-            else if ((!isGrounded || JumpedLastFrame) && CharacterController.velocity.y <= 0f)
-            {
-                CharacterState.SetCharacterMovementState(CharacterMovementState.Falling);
-                JumpedLastFrame = false;
-                CharacterController.stepOffset = 0f;
-            }
-            else
-            {
-                CharacterController.stepOffset = StepOffset;
-            }
             base.UpdateMovementState();
         }
 
         protected override void HandleVerticalMovement()
         {
-            VerticalVelocity -= gravity * Time.deltaTime;
+            UpdateVerticalVelocity();
 
-            if (CharacterState.InGroundedState() && VerticalVelocity < 0)
-                VerticalVelocity = -AntiBump;
-
+            // Handle Jump pressed
             if (_playerLocomotionInput.JumpPressed && CharacterState.InGroundedState() && !CharacterState.InRollingState())
             {
                 // Cancel crouch
@@ -137,30 +118,15 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
                 VerticalVelocity += Mathf.Sqrt(jumpSpeed * 3 * gravity);
                 JumpedLastFrame = true;
             }
-
-            if (CharacterState.IsStateGroundedState(LastMovementState) && !CharacterState.InGroundedState())
-            {
-                VerticalVelocity += AntiBump;
-            }
-
-            // Clamp at terminal velocity
-            if (Mathf.Abs(VerticalVelocity) > Mathf.Abs(terminalVelocity))
-            {
-                VerticalVelocity = -1f * Mathf.Abs(terminalVelocity);
-            }
             base.HandleVerticalMovement();
-        }
-
-        protected override void HandleLateralMovement()
-        {
-            base.HandleLateralMovement();
         }
 
         protected override Vector3 GetMovementDirection()
         {
+            // Derive movement direction from the player camera
             Vector3 cameraForwardXZ =
-                new Vector3(_playerCamera.transform.forward.x, 0f, _playerCamera.transform.forward.z).normalized;
-            Vector3 cameraRightXZ = new Vector3(_playerCamera.transform.right.x, 0f, _playerCamera.transform.right.z)
+                new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
+            Vector3 cameraRightXZ = new Vector3(playerCamera.transform.right.x, 0f, playerCamera.transform.right.z)
                 .normalized;
 
             // If rolling, then ignore the input and move forward
@@ -168,11 +134,6 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
                                                                             cameraForwardXZ * _playerLocomotionInput.MovementInput.y) : transform.forward;
 
             return movementDirection;
-        }
-
-        protected override Vector3 HandleSteepWalls(Vector3 velocity)
-        {
-            return base.HandleSteepWalls(velocity);
         }
         #endregion
 
@@ -195,7 +156,7 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
 
             _cameraRotation.x += lookSenseH * lookInputX;
             _cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSenseV * lookInputY, -lookLimitV, lookLimitV);
-            _playerTargetRotation.x += transform.eulerAngles.x + lookSenseH * lookInputX;
+            TargetRotation.x += transform.eulerAngles.x + lookSenseH * lookInputX;
 
             float rotationTolerance = 90f;
             bool isIdling = CharacterState.CurrentCharacterMovementState == CharacterMovementState.Idling;
@@ -203,10 +164,10 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
 
             if (!CharacterState.InDeadState())
             {
-                // ROTATE if we're not idling
+                // Rotate if we're not idling
                 if (!isIdling)
                 {
-                    RotatePlayerToTarget();
+                    RotateToTarget();
                 }
                 // If rotation mismatch not within tolerance, or rotate to target is active, ROTATE
                 else if (Mathf.Abs(RotationMismatch) > rotationTolerance || IsRotatingToTarget)
@@ -214,64 +175,23 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
                     UpdateIdleRotation(rotationTolerance);
                 }
             }
-            _playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f);
+            playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f);
 
             // Get angle between camera and player
             Vector3 camForwardProjectedXZ =
-                new Vector3(_playerCamera.transform.forward.x, 0f, _playerCamera.transform.forward.z).normalized;
+                new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
             Vector3 crossProduct = Vector3.Cross(transform.forward, camForwardProjectedXZ);
             float sign = Mathf.Sign(Vector3.Dot(crossProduct, transform.up));
             RotationMismatch = sign * Vector3.Angle(transform.forward, camForwardProjectedXZ);
         }
-
-        protected override void UpdateIdleRotation(float rotationTolerance)
-        {
-            base.UpdateIdleRotation(rotationTolerance);
-        }
-
-        protected override void RotatePlayerToTarget()
-        {
-            Quaternion targetRotationX = Quaternion.Euler(0f, _playerTargetRotation.x, 0f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotationX,
-                playerModelRotationSpeed * Time.deltaTime);
-            base.RotatePlayerToTarget();
-        }
-
         #endregion
 
         #region State Checks
-
-        protected override bool IsMovingLaterally()
-        {
-            return base.IsMovingLaterally();
-        }
-
-        protected override bool IsGrounded()
-        {
-            return base.IsGrounded();
-        }
-
-        protected override bool IsGroundedWhileGrounded()
-        {
-            return base.IsGroundedWhileGrounded();
-        }
-
-        protected override bool IsGroundedWhileAirborne()
-        {
-            return base.IsGroundedWhileAirborne();
-        }
-
         protected override bool CanRun()
         {
             // This means player is moving diagonally at 45 degrees or forward, if so, we can run
             return _playerLocomotionInput.MovementInput.y >= Mathf.Abs(_playerLocomotionInput.MovementInput.x);
         }
-
-        protected override bool CanRoll()
-        {
-            return base.CanRoll();
-        }
-
         #endregion
     }
 }

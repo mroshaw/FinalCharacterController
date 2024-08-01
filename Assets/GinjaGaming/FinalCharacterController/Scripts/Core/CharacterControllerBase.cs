@@ -2,15 +2,21 @@ using UnityEngine;
 
 namespace GinjaGaming.FinalCharacterController.Core
 {
+    /// <summary>
+    /// This is an abstract class from which 'CharacterControllers' inherit core functionality to move a
+    /// character. For example, this class is inherited by the 'PlayerController', that adds both end-user
+    /// input and camera controls to create a player controlled character. This class is also inherited by
+    /// an 'AIController' that effectively takes input from a 'NavMeshAgent', rather than input from the player.
+    /// </summary>
     [DefaultExecutionOrder(-1)]
     public abstract class CharacterControllerBase : MonoBehaviour
     {
         #region Class Variables
-
         [Header("Components")]
         [SerializeField] private CharacterController characterController;
-        public float RotationMismatch { get; set; } = 0f;
-        public bool IsRotatingToTarget { get; set; } = false;
+
+        public float RotationMismatch { get; set; }
+        public bool IsRotatingToTarget { get; set; }
 
         [Header("Base Movement")]
         public float walkAcceleration = 25f;
@@ -38,20 +44,31 @@ namespace GinjaGaming.FinalCharacterController.Core
         [Header("Environment Details")]
         [SerializeField] private LayerMask groundLayers;
 
+        /// <summary>
+        /// These properties are derived from the controller velocity, and can be used by the Animator
+        /// to drive animations based on the properties of the controller, rather than by properties of the input.
+        /// This abstracts the Animator from Input, allowing it to be used for other purposes, such as AI characters.
+        /// </summary>
         public float ForwardSpeed { get; private set; }
         public float LateralSpeed { get; private set; }
         public float VerticalSpeed { get; private set; }
 
+        /// <summary>
+        /// These protected properties are used and set by super-class implementations, for example the PlayerController
+        /// and AIController.
+        /// </summary>
         protected CharacterState CharacterState { get; private set; }
         protected CharacterMovementState LastMovementState { get; set; } = CharacterMovementState.Falling;
-        protected CharacterController CharacterController => characterController;
-        protected bool JumpedLastFrame { get; set; } = false;
-        protected float VerticalVelocity { get; set; } = 0f;
-        protected float AntiBump { get; private set; }
-        protected float StepOffset { get; private set; }
-        protected float RotatingToTargetTimer { get; private set; } = 0f;
+        private CharacterController CharacterController => characterController;
+        protected bool JumpedLastFrame { get; set; }
+        protected float VerticalVelocity { get; set; }
+        private float AntiBump { get; set; }
+        private float StepOffset { get; set; }
+        protected float RotatingToTargetTimer { get; private set; }
 
-        private bool _isRotatingClockwise = false;
+        protected Vector2 TargetRotation  = Vector2.zero;
+
+        private bool _isRotatingClockwise;
         #endregion
 
         #region Startup
@@ -61,7 +78,6 @@ namespace GinjaGaming.FinalCharacterController.Core
             AntiBump = sprintSpeed;
             StepOffset = characterController.stepOffset;
         }
-
         #endregion
 
         #region Update Logic
@@ -73,6 +89,10 @@ namespace GinjaGaming.FinalCharacterController.Core
             UpdateCharacterVelocities();
         }
 
+        /// <summary>
+        /// Derive velocities in each plane, so these can be used by the Animator to drive BlendTree
+        /// animations.
+        /// </summary>
         protected virtual void UpdateCharacterVelocities()
         {
             ForwardSpeed = transform.InverseTransformDirection(characterController.velocity).z;
@@ -82,17 +102,53 @@ namespace GinjaGaming.FinalCharacterController.Core
 
         protected virtual void UpdateActionState()
         {
-
         }
 
         protected virtual void UpdateMovementState()
         {
+            bool isGrounded = IsGrounded();
 
+            // Control Airborne State
+            if ((!isGrounded || JumpedLastFrame) && CharacterController.velocity.y > 0.0f)
+            {
+                CharacterState.SetCharacterMovementState(CharacterMovementState.Jumping);
+                JumpedLastFrame = false;
+                CharacterController.stepOffset = 0f;
+            }
+            else if ((!isGrounded || JumpedLastFrame) && CharacterController.velocity.y <= 0f)
+            {
+                CharacterState.SetCharacterMovementState(CharacterMovementState.Falling);
+                JumpedLastFrame = false;
+                CharacterController.stepOffset = 0f;
+            }
+            else
+            {
+                CharacterController.stepOffset = StepOffset;
+            }
         }
 
         protected virtual void HandleVerticalMovement()
         {
+            if (CharacterState.IsStateGroundedState(LastMovementState) && !CharacterState.InGroundedState())
+            {
+                VerticalVelocity += AntiBump;
+            }
 
+            // Clamp at terminal velocity
+            if (Mathf.Abs(VerticalVelocity) > Mathf.Abs(terminalVelocity))
+            {
+                VerticalVelocity = -1f * Mathf.Abs(terminalVelocity);
+            }
+        }
+
+        protected virtual void UpdateVerticalVelocity()
+        {
+            VerticalVelocity -= gravity * Time.deltaTime;
+
+            if (CharacterState.InGroundedState() && VerticalVelocity < 0)
+            {
+                VerticalVelocity = -AntiBump;
+            }
         }
 
         protected virtual void HandleLateralMovement()
@@ -114,7 +170,7 @@ namespace GinjaGaming.FinalCharacterController.Core
             Vector3 movementDelta = movementDirection * (lateralAcceleration * Time.deltaTime);
             Vector3 newVelocity = characterController.velocity + movementDelta;
 
-            // Add drag to player
+            // Add drag to character
             float dragMagnitude = CharacterState.InGroundedState() ? drag : inAirDrag;
             Vector3 currentDrag = newVelocity.normalized * (dragMagnitude * Time.deltaTime);
             newVelocity = (newVelocity.magnitude > dragMagnitude * Time.deltaTime)
@@ -131,6 +187,11 @@ namespace GinjaGaming.FinalCharacterController.Core
             }
         }
 
+        /// <summary>
+        /// Implement this in the parent class to return the direction vector for the character. This can, for example,
+        /// use end-user input for a PlayerController, or results from a NavMeshAgent for an AIController.
+        /// </summary>
+        /// <returns></returns>
         protected abstract Vector3 GetMovementDirection();
 
         protected virtual Vector3 HandleSteepWalls(Vector3 velocity)
@@ -159,17 +220,19 @@ namespace GinjaGaming.FinalCharacterController.Core
 
             RotatingToTargetTimer -= Time.deltaTime;
 
-            // Rotate player
+            // Rotate character
             if (_isRotatingClockwise && RotationMismatch > 0f ||
                 !_isRotatingClockwise && RotationMismatch < 0f)
             {
-                RotatePlayerToTarget();
+                RotateToTarget();
             }
         }
 
-        protected virtual void RotatePlayerToTarget()
+        protected virtual void RotateToTarget()
         {
-
+            Quaternion targetRotationX = Quaternion.Euler(0f, TargetRotation.x, 0f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotationX,
+                playerModelRotationSpeed * Time.deltaTime);
         }
 
         #endregion
@@ -211,7 +274,8 @@ namespace GinjaGaming.FinalCharacterController.Core
 
         protected virtual bool CanRun()
         {
-            return false;
+            // Character is moving at less than a 45 degree angle, and so can run.
+            return ForwardSpeed >= Mathf.Abs(LateralSpeed);
         }
 
         protected virtual bool CanRoll()
