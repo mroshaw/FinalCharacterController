@@ -20,11 +20,9 @@ namespace GinjaGaming.FinalCharacterController.Core
         public UnityEvent healthIncreasedEvent;
         public UnityEvent healthGoneEvent;
         public UnityEvent healthGoneDelayedEvent;
-
         #endregion
 
         #region Startup
-
         private void Awake()
         {
             _currentHealth = startingHealth;
@@ -32,7 +30,6 @@ namespace GinjaGaming.FinalCharacterController.Core
         #endregion
 
         #region Class Methods
-
         public void ResetHealth()
         {
             _currentHealth = startingHealth;
@@ -68,7 +65,6 @@ namespace GinjaGaming.FinalCharacterController.Core
             _isDead = true;
             healthGoneEvent.Invoke();
             StartCoroutine(CallHealthGoneDelayEventAfterDelay());
-
         }
 
         public bool IsDead()
@@ -85,6 +81,11 @@ namespace GinjaGaming.FinalCharacterController.Core
             healthChangedEvent.Invoke(_currentHealth);
         }
 
+        /// <summary>
+        /// This asynchronous method is called when health is first reduced to zero. This then triggers a UnityEvent
+        /// after the configured delay. This is useful to allow for a pause between the death of a character and some
+        /// other action, such as resetting the character or displaying a 'Game Over' screen.
+        /// </summary>
         private IEnumerator CallHealthGoneDelayEventAfterDelay()
         {
             yield return new WaitForSeconds(delayHealthGoneTriggerWait);

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,6 +15,7 @@ namespace GinjaGaming.FinalCharacterController.Core
         [Header("Events")]
         [SerializeField] private UnityEvent<Collider> triggerEnterEvent;
         [SerializeField] private UnityEvent<Collider> triggerExitEvent;
+        [SerializeField] private UnityEvent<Collider> triggerStayEvent;
         #endregion
 
         #region Startup
@@ -47,6 +49,15 @@ namespace GinjaGaming.FinalCharacterController.Core
             }
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+            if (CollisionIsValid(other))
+            {
+                TriggerStay(other);
+                triggerStayEvent.Invoke(other);
+            }
+        }
+
         private bool CollisionIsValid(Collider other)
         {
             // Compare tags
@@ -64,5 +75,6 @@ namespace GinjaGaming.FinalCharacterController.Core
 
         protected abstract void TriggerEnter(Collider other);
         protected abstract void TriggerExit(Collider other);
+        protected abstract void TriggerStay(Collider other);
     }
 }

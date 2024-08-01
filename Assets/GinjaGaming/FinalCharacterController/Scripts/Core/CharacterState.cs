@@ -2,12 +2,44 @@ using UnityEngine;
 
 namespace GinjaGaming.FinalCharacterController.Core
 {
+    /// <summary>
+    /// These are the various Movement, Action, and Health states. The character can be in only one of these states,
+    /// within each type, at any one time.
+    /// </summary>
+    public enum CharacterMovementState
+    {
+        Idling = 0,
+        Walking = 1,
+        Running = 2,
+        Sprinting = 3,
+        Jumping = 4,
+        Falling = 5,
+        Strafing = 6,
+        Rolling = 7,
+        Crouching = 8,
+    }
+
+    public enum CharacterActionState
+    {
+        Idle = 0,
+        Attacking = 1,
+        Gathering = 2,
+    }
+
+    public enum CharacterHealthState
+    {
+        Fine = 0,
+        Injured = 1,
+        Dead = 2,
+    }
+
     public class CharacterState : MonoBehaviour
     {
         [field: SerializeField] public CharacterMovementState CurrentCharacterMovementState { get; private set; } = CharacterMovementState.Idling;
         [field: SerializeField] public CharacterActionState CurrentCharacterActionState { get; private set; } = CharacterActionState.Idle;
         [field: SerializeField] public CharacterHealthState CurrentCharacterHealthState { get; private set; } = CharacterHealthState.Fine;
 
+        #region Class methods
         public void ResetStates()
         {
             CurrentCharacterMovementState = CharacterMovementState.Idling;
@@ -88,31 +120,6 @@ namespace GinjaGaming.FinalCharacterController.Core
                 CharacterMovementState.Running or CharacterMovementState.Sprinting or CharacterMovementState.Rolling
                 or CharacterMovementState.Crouching;
         }
-    }
-    public enum CharacterMovementState
-    {
-        Idling = 0,
-        Walking = 1,
-        Running = 2,
-        Sprinting = 3,
-        Jumping = 4,
-        Falling = 5,
-        Strafing = 6,
-        Rolling = 7,
-        Crouching = 8,
-    }
-
-    public enum CharacterActionState
-    {
-        Idle = 0,
-        Attacking = 1,
-        Gathering = 2,
-    }
-
-    public enum CharacterHealthState
-    {
-        Fine = 0,
-        Injured = 1,
-        Dead = 2,
+        #endregion
     }
 }
