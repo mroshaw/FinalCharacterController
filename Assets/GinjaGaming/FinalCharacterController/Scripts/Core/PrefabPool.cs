@@ -4,6 +4,10 @@ using UnityEngine.Pool;
 
 namespace GinjaGaming.FinalCharacterController.Core
 {
+    /// <summary>
+    /// Implements a generic 'Prefab Poo' using Unity Pooling. This allows for 're-use' of a number of prefab instances
+    /// that avoid unnecessary garbage generation and collection.
+    /// </summary>
     public class PrefabPool : MonoBehaviour
     {
         #region Class Variables
@@ -23,9 +27,6 @@ namespace GinjaGaming.FinalCharacterController.Core
         #endregion
 
         #region Startup
-        /// <summary>
-        /// Configure the component on awake
-        /// </summary>   
         private void Start()
         {
             _prefabInstancePool = new ObjectPool<GameObject>(CreatePrefabInstancePoolItem, PrefabInstanceOnTakeFromPool,
@@ -35,7 +36,6 @@ namespace GinjaGaming.FinalCharacterController.Core
         #endregion
 
         #region Update
-
         private void Update()
         {
             poolActiveCountDebug = _prefabInstancePool.CountActive;
