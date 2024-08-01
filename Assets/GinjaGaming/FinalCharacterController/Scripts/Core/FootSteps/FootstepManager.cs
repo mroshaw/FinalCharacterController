@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController.Core.FootSteps
+namespace GinjaGaming.FinalCharacterController.Core.Footsteps
 {
     public class FootstepManager : MonoBehaviour
     {
@@ -9,9 +9,9 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
         [Header("Settings")]
         [SerializeField] private FootstepTrigger[] footstepTriggers;
         [SerializeField] private FootstepSurface defaultSurface;
-        [SerializeField] private FootstepSurface[] footStepAudios;
+        [SerializeField] private FootstepSurface[] footstepSurfaces;
 
-        [Header("Spawn Settings")] public bool alignToTerrainSlope;
+        [Header("Spawn Settings")] [Tooltip("Tick this to align spawned footprint decals to the terrain slope.")] public bool alignToTerrainSlope;
 
         [Header("Pool Settings")]
         [SerializeField] private PrefabPool particleFxPool;
@@ -20,9 +20,7 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
         [Header("Debug")][SerializeField] private bool debugTextureName;
 
         private TerrainData _terrainData;
-
         private bool _terrainDetected;
-
         #endregion
 
         #region Startup
@@ -46,18 +44,22 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
         #region Class methods
         public void SpawnFootStepParticleFx(Vector3 spawnPosition, Quaternion spawnRotation)
         {
-            GameObject particleFxInstance = particleFxPool.SpawnInstance(spawnPosition, spawnRotation);
+            particleFxPool.SpawnInstance(spawnPosition, spawnRotation);
         }
 
-        public void SpawnFootStepDecal(Vector3 spawnPosition, Quaternion spawnRotation)
+        public void SpawnFootprint(Vector3 spawnPosition, Quaternion spawnRotation)
         {
-            GameObject decalInstance = decalPool.SpawnInstance(spawnPosition, spawnRotation);
+            decalPool.SpawnInstance(spawnPosition, spawnRotation);
         }
 
+        /// <summary>
+        /// Using the collider collision information, try to identify either a Terrain or a Mesh from
+        /// which we can derive a texture. Using that texture, we can lookup the available FootstepSurfaces in order
+        /// to play an appropriate AudioClip and spawn a particle and decal.
+        /// </summary>
         public void GetSurfaceFromCollision(Transform footTransform, Collider otherCollider,
             out FootstepSurface footstepSurface, out Vector3 spawnPosition)
         {
-
             if (otherCollider is TerrainCollider)
             {
                 Vector3 collisionPosition = footTransform.position;
@@ -83,19 +85,25 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
             spawnPosition = footTransform.position;
         }
 
+        /// <summary>
+        /// Iterates across the registered FootstepSurface instances to see if one matches the provided textureName. If
+        /// found, then the FootstepSurface instance is returned, otherwise null.
+        /// </summary>
         private FootstepSurface FindSurfaceFromTexture(string textureName)
         {
-            foreach (FootstepSurface currSurface in footStepAudios)
+            foreach (FootstepSurface currSurface in footstepSurfaces)
             {
-                if (currSurface.ContainsTextureName(textureName) && currSurface.audioClips.Length > 0)
+                if (currSurface.ContainsTextureName(textureName) && currSurface.AudioClips.Length > 0)
                 {
                     return currSurface;
-                    ;
                 }
             }
             return defaultSurface;
         }
 
+        /// <summary>
+        /// Tries to find the primary texture on the material of a (non-terrain) Mesh or primitive collider.
+        /// </summary>
         private bool FindMaterialTextureFromCollider(Collider other, out string textureName)
         {
             if (other.isTrigger)
@@ -124,6 +132,13 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
             return true;
         }
 
+        /// <summary>
+        /// Uses TerrainData and terrain splat maps to find the 'primary' layer texture at the point of the
+        /// collision with the footstep trigger.
+        /// </summary>
+        /// <param name="collisionPosition"></param>
+        /// <param name="textureName"></param>
+        /// <returns></returns>
         private bool FindTerrainTextureAtPosition(Vector3 collisionPosition, out string textureName)
         {
             textureName = "";

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController.Core.FootSteps
+namespace GinjaGaming.FinalCharacterController.Core.Footsteps
 {
     public class FootstepTrigger : CharacterTrigger
     {
@@ -30,26 +30,28 @@ namespace GinjaGaming.FinalCharacterController.Core.FootSteps
                 out Vector3 spawnPosition);
 
             // Spawn particles
-            if (footstepSurface.spawnParticle)
+            if (footstepSurface.SpawnParticle)
             {
                 FootstepManager.SpawnFootStepParticleFx(spawnPosition, FootstepManager.transform.rotation);
             }
 
             // Spawn decal
-            if (footstepSurface.spawnDecal)
+            if (footstepSurface.SpawnFootprint)
             {
-                FootstepManager.SpawnFootStepDecal(spawnPosition, FootstepManager.transform.rotation);
+                FootstepManager.SpawnFootprint(spawnPosition, FootstepManager.transform.rotation);
             }
 
             // Play random audio
-            System.Random randomAudio = new System.Random();
-            int audioIndex = randomAudio.Next(0, footstepSurface.audioClips.Length);
-            AudioClip audioClip = footstepSurface.audioClips[audioIndex];
+
             _audioSource.Stop();
-            _audioSource.PlayOneShot(audioClip);
+            _audioSource.PlayOneShot(footstepSurface.GetRandomAudioClip());
         }
 
         protected override void TriggerExit(Collider other)
+        {
+        }
+
+        protected override void TriggerStay(Collider other)
         {
         }
         #endregion
