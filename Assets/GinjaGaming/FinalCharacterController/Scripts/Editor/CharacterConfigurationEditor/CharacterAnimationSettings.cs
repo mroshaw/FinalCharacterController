@@ -259,7 +259,10 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
                 ChildMotion[] newMotions = blendTree.children;
                 newMotions[motionIndex].motion = animClip;
                 newMotions[motionIndex].mirror = mirrorAnimation;
-                newMotions[motionIndex].timeScale = animSpeed;
+                if (animSpeed > 0)
+                {
+                    newMotions[motionIndex].timeScale = animSpeed;
+                }
                 blendTree.children = newMotions;
             }
 

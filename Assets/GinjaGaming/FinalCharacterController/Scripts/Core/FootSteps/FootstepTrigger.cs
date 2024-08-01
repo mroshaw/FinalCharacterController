@@ -26,6 +26,11 @@ namespace GinjaGaming.FinalCharacterController.Core.Footsteps
 
         protected override void TriggerEnter(Collider other)
         {
+            if (!FootstepManager)
+            {
+                return;
+            }
+
             FootstepManager.GetSurfaceFromCollision(transform, other, out FootstepSurface footstepSurface,
                 out Vector3 spawnPosition);
 

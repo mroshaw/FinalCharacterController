@@ -192,6 +192,11 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
             // This means player is moving diagonally at 45 degrees or forward, if so, we can run
             return _playerLocomotionInput.MovementInput.y >= Mathf.Abs(_playerLocomotionInput.MovementInput.x);
         }
+
+        public void SetCamera(Camera newCamera)
+        {
+            playerCamera = newCamera;
+        }
         #endregion
     }
 }

@@ -34,47 +34,56 @@ namespace GinjaGaming.FinalCharacterController.Core
 
         public void PlayJumpAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(jumpAudioClips));
+            PlayAudio(jumpAudioClips);
         }
 
         public void PlayEffortAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(effortAudioClips));
+            PlayAudio(effortAudioClips);
         }
 
         public void PlayReliefAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(reliefAudioClips));
+            PlayAudio(reliefAudioClips);
         }
 
         public void PlayHitAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(hitAudioClips));
+            PlayAudio(hitAudioClips);
         }
 
         public void PlayShortAttackAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(attackShortAudioClips));
+            PlayAudio(attackShortAudioClips);
         }
 
         public void PlayAttackAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(attackAudioClips));
+            PlayAudio(attackAudioClips);
         }
 
         public void PlayPainAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(painAudioClips));
+            PlayAudio(painAudioClips);
         }
 
         public void PlayGroundThudAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(groundThudAudioClips));
+            PlayAudio(groundThudAudioClips);
         }
 
         public void PlayDeathAudio()
         {
-            _audioSource.PlayOneShot(GetRandomAudioClip(deathAudioClips));
+            PlayAudio(deathAudioClips);
+        }
+
+        private void PlayAudio(AudioClip[] audioClips)
+        {
+            AudioClip audioClip = GetRandomAudioClip(audioClips);
+            if (audioClip)
+            {
+                _audioSource.PlayOneShot(audioClip);
+            }
         }
 
         private AudioClip GetRandomAudioClip(AudioClip[] audioClipArray)

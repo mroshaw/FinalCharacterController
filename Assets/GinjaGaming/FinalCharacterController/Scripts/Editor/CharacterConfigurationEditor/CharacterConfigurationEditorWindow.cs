@@ -1,3 +1,4 @@
+using GinjaGaming.Core.Extensions;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEditor.UIElements;
@@ -6,12 +7,14 @@ using UnityEngine.UIElements;
 
 namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEditor
 {
+    public enum CharacterEditorType {ThirdPerson, FirstPerson, AI }
     public class CharacterConfigurationEditorWindow : EditorWindow
     {
         [SerializeField] private VisualTreeAsset tree;
 
         private Transform _characterController;
         private CharacterAnimationSettings _animationSettings;
+        private CharacterEditorPreset _characterEditorPreset;
 
         private Button _applyButton;
         private TextField _logText;
@@ -39,6 +42,12 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
                 UpdateApplyButtonState();
             });
 
+            rootVisualElement.Q<ObjectField>("CharacterPreset").RegisterValueChangedCallback(evt =>
+            {
+                _characterEditorPreset = evt.newValue as CharacterEditorPreset;
+                UpdateApplyButtonState();
+            });
+
             _applyButton = rootVisualElement.Q<Button>("ApplyButton");
             UpdateApplyButtonState();
             _applyButton.RegisterCallback<ClickEvent>(evt =>
@@ -60,7 +69,8 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
         private void UpdateApplyButtonState()
         {
             if (_characterController != null && _animationSettings != null &&
-                _animationSettings.mappingSettings.referenceController != null)
+                _animationSettings.mappingSettings.referenceController != null &&
+                _characterEditorPreset != null && _characterController.GetComponent<Animator>())
             {
                 // Valid settings
                 _applyButton.style.backgroundColor = Color.green;
@@ -88,6 +98,8 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             AddToLog("Applying animations...");
             ConfigureAnims(controller);
 
+            AddToLog("Adding custom components...");
+            _characterEditorPreset.ApplyPreset(_characterController.gameObject);
             AddToLog("Done!");
         }
 
@@ -95,7 +107,13 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
         {
             if (!_characterController)
             {
-                AddToLog("Please select your character controller!");
+                AddToLog("Please select your character model game object!");
+                return false;
+            }
+
+            if (!_characterController.GetComponent<Animator>())
+            {
+                AddToLog("Please add an animator to your character model and ensure the Avatar is set!");
                 return false;
             }
 
@@ -111,20 +129,17 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
                 return false;
             }
 
+
+
             return true;
         }
 
         private AnimatorController ConfigureAnimator()
         {
-            Animator animator = _characterController.GetComponent<Animator>();
-            if (!animator)
-            {
-                animator = _characterController.gameObject.AddComponent<Animator>();
-            }
+            Animator animator = _characterController.EnsureComponent<Animator>();
 
             AnimatorController controller =
                 _animationSettings.mappingSettings.DuplicateController(_characterController.gameObject.name);
-
             animator.runtimeAnimatorController = controller;
 
             return controller;

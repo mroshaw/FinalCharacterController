@@ -98,5 +98,14 @@ namespace GinjaGaming.FinalCharacterController.Core
             animator.SetFloat(RotationMismatchHash, _characterController.RotationMismatch);
         }
         #endregion
+
+        #region Editor Helper methods
+        #if UNITY_EDITOR
+        public void SetAnimator(Animator newAnimator)
+        {
+            animator = newAnimator;
+        }
+        #endif
+        #endregion
     }
 }

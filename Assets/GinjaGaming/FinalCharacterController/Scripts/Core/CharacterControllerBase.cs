@@ -59,7 +59,12 @@ namespace GinjaGaming.FinalCharacterController.Core
         /// </summary>
         protected CharacterState CharacterState { get; private set; }
         protected CharacterMovementState LastMovementState { get; set; } = CharacterMovementState.Falling;
-        private CharacterController CharacterController => characterController;
+        public CharacterController CharacterController
+        {
+            get => characterController;
+            set => characterController = value;
+        }
+
         protected bool JumpedLastFrame { get; set; }
         protected float VerticalVelocity { get; set; }
         private float AntiBump { get; set; }
@@ -283,6 +288,15 @@ namespace GinjaGaming.FinalCharacterController.Core
             return CharacterState.CurrentCharacterMovementState != CharacterMovementState.Jumping &&
                    CharacterState.CurrentCharacterMovementState != CharacterMovementState.Falling;
         }
+        #endregion
+
+        #region Editor Helper methods
+        #if UNITY_EDITOR
+        public void SetGroundLayer(LayerMask layerMask)
+        {
+            groundLayers = layerMask;
+        }
+        #endif
         #endregion
     }
 }
