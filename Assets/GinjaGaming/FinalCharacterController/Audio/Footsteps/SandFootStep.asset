@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SandFootstep
   m_EditorClassIdentifier: 
   spawnParticle: 1
-  spawnDecal: 1
+  spawnFootprint: 1
   textureNames:
   - Sand
   - BeachSand_a
