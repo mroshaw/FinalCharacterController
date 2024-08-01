@@ -5,6 +5,7 @@ namespace GinjaGaming.FinalCharacterController.Core
 {
     public class CharacterAnimation : MonoBehaviour
     {
+        #region Class Variables
         [Header("Animation Settings")]
         [SerializeField] private Animator animator;
         [SerializeField] private float locomotionBlendSpeed = 4f;
@@ -38,14 +39,18 @@ namespace GinjaGaming.FinalCharacterController.Core
         private static readonly int RotationMismatchHash = Animator.StringToHash("RotationMismatch");
 
         private Vector3 _currentBlendInput = Vector3.zero;
+        #endregion
 
+        #region Startup
         private void Awake()
         {
             _characterState = GetComponent<CharacterState>();
             _characterController = GetComponent<CharacterControllerBase>();
             _actionHashes = new int[] { IsGatheringHash };
         }
+        #endregion
 
+        #region Update
         private void Update()
         {
             UpdateAnimationState();
@@ -92,5 +97,6 @@ namespace GinjaGaming.FinalCharacterController.Core
             animator.SetFloat(VerticalSpeedHash, _currentBlendInput.y);
             animator.SetFloat(RotationMismatchHash, _characterController.RotationMismatch);
         }
+        #endregion
     }
 }
