@@ -5,16 +5,14 @@
         <ui:Label tabindex="-1" text="1. Drag your character controller game object from the scene view hierarchy:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CharGameObjectInstruction" class="InstructionText" />
         <uie:ObjectField label="Character Game Object" type="UnityEngine.Transform, UnityEngine.CoreModule" name="CharGameObject" class="Field" />
         <ui:Label tabindex="-1" text="2. Pick your pre-defined animation settings:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AnimSettingsInstructions" class="InstructionText" />
-        <uie:ObjectField label="Animation Settings" type="GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEditor.CharacterAnimationSettings, GinjaGaming.FinalCharacterController.Editor" name="AnimSettings" class="Field" />
+        <uie:ObjectField label="Animation Presets" type="GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEditor.AnimationPresets, GinjaGaming.FinalCharacterController.Editor" name="AnimPresets" class="Field" />
         <ui:Label tabindex="-1" text="3. Pick your presets:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ControllerTypeInstructions" class="InstructionText" />
-        <uie:ObjectField label="Preset:" type="GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEditor.CharacterEditorPreset, GinjaGaming.FinalCharacterController.Editor" name="CharacterPreset" class="Field" />
+        <uie:ObjectField label="Character Preset:" type="GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEditor.CharacterEditorPreset, GinjaGaming.FinalCharacterController.Editor" name="CharacterPreset" class="Field" />
         <ui:Label tabindex="-1" text="4. Click the button to apply your settings:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ApplyInstructions" class="InstructionText" />
         <ui:Button text="Apply" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ApplyButton" class="Button" />
         <ui:Label tabindex="-1" text="Log:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LogLabel" class="Label" />
-        <ui:ScrollView class="ScrollView">
-            <ui:VisualElement style="flex-grow: 1;">
-                <ui:TextField picking-mode="Ignore" name="LogText" class="LogText" />
-            </ui:VisualElement>
+        <ui:ScrollView name="LogScrollView" vertical-scroller-visibility="AlwaysVisible" class="ScrollView">
+            <ui:TextField picking-mode="Ignore" name="LogTextField" multiline="true" class="LogText" />
         </ui:ScrollView>
     </ui:VisualElement>
 </ui:UXML>

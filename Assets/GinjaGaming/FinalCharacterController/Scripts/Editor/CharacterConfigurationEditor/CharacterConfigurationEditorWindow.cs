@@ -13,7 +13,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
         [SerializeField] private VisualTreeAsset tree;
 
         private Transform _characterController;
-        private CharacterAnimationSettings _animationSettings;
+        private AnimationPresets _animationPresets;
         private CharacterEditorPreset _characterEditorPreset;
 
         private Button _applyButton;
@@ -33,31 +33,32 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             rootVisualElement.Q<ObjectField>("CharGameObject").RegisterValueChangedCallback(evt =>
             {
                 _characterController = evt.newValue as Transform;
-                UpdateApplyButtonState();
+                UpdateApplyButtonState(ValidateUserInput(false));
             });
 
-            rootVisualElement.Q<ObjectField>("AnimSettings").RegisterValueChangedCallback(evt =>
+            rootVisualElement.Q<ObjectField>("AnimPresets").RegisterValueChangedCallback(evt =>
             {
-                _animationSettings = evt.newValue as CharacterAnimationSettings;
-                UpdateApplyButtonState();
+                _animationPresets = evt.newValue as AnimationPresets;
+                UpdateApplyButtonState(ValidateUserInput(false));
             });
 
             rootVisualElement.Q<ObjectField>("CharacterPreset").RegisterValueChangedCallback(evt =>
             {
                 _characterEditorPreset = evt.newValue as CharacterEditorPreset;
-                UpdateApplyButtonState();
+                UpdateApplyButtonState(ValidateUserInput(false));
             });
 
             _applyButton = rootVisualElement.Q<Button>("ApplyButton");
-            UpdateApplyButtonState();
+            UpdateApplyButtonState(ValidateUserInput(false));
             _applyButton.RegisterCallback<ClickEvent>(evt =>
             {
+                ClearLog();
                 ApplySettings();
             });
 
-            _logText = rootVisualElement.Q<TextField>("LogText");
+            _logText = rootVisualElement.Q<TextField>("LogTextField");
             _logText.value = "";
-
+            UpdateApplyButtonState(ValidateUserInput(false));
         }
 
         private void AddToLog(string logText)
@@ -66,11 +67,14 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             Debug.Log(logText);
         }
 
-        private void UpdateApplyButtonState()
+        private void ClearLog()
         {
-            if (_characterController != null && _animationSettings != null &&
-                _animationSettings.mappingSettings.referenceController != null &&
-                _characterEditorPreset != null && _characterController.GetComponent<Animator>())
+            _logText.value = "";
+        }
+
+        private void UpdateApplyButtonState(bool validationState)
+        {
+            if(validationState)
             {
                 // Valid settings
                 _applyButton.style.backgroundColor = Color.green;
@@ -86,7 +90,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
 
         private void ApplySettings()
         {
-            if (!ValidateUserInput())
+            if (!ValidateUserInput(true))
             {
                 AddToLog("Validation failed. Cannot apply settings!");
                 return;
@@ -103,35 +107,46 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             AddToLog("Done!");
         }
 
-        private bool ValidateUserInput()
+        private bool ValidateUserInput(bool showLog)
         {
+            bool validationResult = true;
+            string resultLog = "";
+
             if (!_characterController)
             {
-                AddToLog("Please select your character model game object!");
-                return false;
+                validationResult = false;
+                resultLog += "Please select your character model game object!\n";
             }
 
-            if (!_characterController.GetComponent<Animator>())
+            if (_characterController && !_characterController.GetComponent<Animator>())
             {
-                AddToLog("Please add an animator to your character model and ensure the Avatar is set!");
-                return false;
+                validationResult = false;
+                resultLog += "Please add an animator to your character model and ensure the Avatar is set!\n";
             }
 
-            if (!_animationSettings)
+            if (!_animationPresets)
             {
-                AddToLog("Please select your animation settings!");
-                return false;
+                validationResult = false;
+                resultLog += "Please select your animation presets!\n";
             }
 
-            if (!_animationSettings.mappingSettings.referenceController)
+            if (_animationPresets && (!_animationPresets.animMappings || !_animationPresets.animMappings.referenceController))
             {
-                AddToLog("Please select a reference controller in your animation settings!");
-                return false;
+                validationResult = false;
+                resultLog += "Animation presets is not configured! Please check that mappings are assigned and the mapping has a reference controller set!\n";
             }
 
+            if (!_characterEditorPreset)
+            {
+                validationResult = false;
+                resultLog += "Please select a character preset!\n";
+            }
 
-
-            return true;
+            if (showLog)
+            {
+                AddToLog(resultLog.TrimEnd( '\r', '\n' ));
+            }
+            return validationResult;
         }
 
         private AnimatorController ConfigureAnimator()
@@ -139,7 +154,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             Animator animator = _characterController.EnsureComponent<Animator>();
 
             AnimatorController controller =
-                _animationSettings.mappingSettings.DuplicateController(_characterController.gameObject.name);
+                _animationPresets.animMappings.DuplicateController(_characterController.gameObject.name);
             animator.runtimeAnimatorController = controller;
 
             return controller;
@@ -147,7 +162,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
 
         private void ConfigureAnims(AnimatorController animatorController)
         {
-            _animationSettings.UpdateAllAnims(animatorController);
+            _animationPresets.UpdateAllAnims(animatorController);
         }
     }
 }

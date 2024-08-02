@@ -1,0 +1,275 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7fdca12436ff3143b0df0091d512544, type: 3}
+  m_Name: FinalControllerAnimationMappings
+  m_EditorClassIdentifier: 
+  referenceController: {fileID: 9100000, guid: 539311f8059554149b5b18c5c2a0d25e, type: 2}
+  animMappings:
+  - animationHeader: Attack
+    animationName: Unarmed Melee Attack
+    stateName: PunchRight
+    stateMachineName: 
+    layerName: Upper Body
+    blendTreeName: 
+    blendTreeIndex: 0
+  - animationHeader: Actions
+    animationName: Gathering
+    stateName: Gathering
+    stateMachineName: Actions (cancellable)
+    layerName: Base Layer
+    blendTreeName: 
+    blendTreeIndex: 0
+  - animationHeader: Actions
+    animationName: Rolling
+    stateName: Rolling
+    stateMachineName: Actions
+    layerName: Base Layer
+    blendTreeName: 
+    blendTreeIndex: 0
+  - animationHeader: Falling
+    animationName: Falling Down
+    stateName: Falling Blend Tree
+    stateMachineName: Locomotion
+    layerName: Base Layer
+    blendTreeName: Falling
+    blendTreeIndex: 0
+  - animationHeader: Falling
+    animationName: Falling Left
+    stateName: Falling Blend Tree
+    stateMachineName: Locomotion
+    layerName: Base Layer
+    blendTreeName: Falling
+    blendTreeIndex: 1
+  - animationHeader: Falling
+    animationName: Falling Right
+    stateName: Falling Blend Tree
+    stateMachineName: Locomotion
+    layerName: Base Layer
+    blendTreeName: Falling
+    blendTreeIndex: 2
+  - animationHeader: Jumping
+    animationName: Jump Up
+    stateName: Jump Up Blend Tree
+    stateMachineName: Locomotion
+    layerName: Base Layer
+    blendTreeName: Jump Up
+    blendTreeIndex: 0
+  - animationHeader: Jumping
+    animationName: Jump Forward
+    stateName: Jump Up Blend Tree
+    stateMachineName: Locomotion
+    layerName: Base Layer
+    blendTreeName: Jump Up
+    blendTreeIndex: 1
+  - animationHeader: Jumping
+    animationName: Jump Left
+    stateName: Jump Up Blend Tree
+    stateMachineName: Locomotion
+    layerName: Base Layer
+    blendTreeName: Jump Up
+    blendTreeIndex: 2
+  - animationHeader: Jumping
+    animationName: Jump Right
+    stateName: Jump Up Blend Tree
+    stateMachineName: Locomotion
+    layerName: Base Layer
+    blendTreeName: Jump Up
+    blendTreeIndex: 3
+  - animationHeader: Movement
+    animationName: Turn 90 Left
+    stateName: Turn 90 L
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: 
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Turn 90 Right
+    stateName: Turn 90 R
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: 
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Idle
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Idle
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Idle Rotate Left
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Idle
+    blendTreeIndex: 1
+  - animationHeader: Movement
+    animationName: Idle Rotate Right
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Idle
+    blendTreeIndex: 2
+  - animationHeader: Movement
+    animationName: Walk Backwards
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Backwards
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Walk Back Left
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Backwards
+    blendTreeIndex: 1
+  - animationHeader: Movement
+    animationName: Walk Back Right
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Backwards
+    blendTreeIndex: 2
+  - animationHeader: Movement
+    animationName: Walk Idle
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Walking
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Walk Forward
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Walking
+    blendTreeIndex: 1
+  - animationHeader: Movement
+    animationName: Walk Left
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Walking
+    blendTreeIndex: 2
+  - animationHeader: Movement
+    animationName: Walk Right
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Walking
+    blendTreeIndex: 3
+  - animationHeader: Movement
+    animationName: Run Idle
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Run
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Run Forward
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Run
+    blendTreeIndex: 1
+  - animationHeader: Movement
+    animationName: Run Left
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Run
+    blendTreeIndex: 2
+  - animationHeader: Movement
+    animationName: Run Right
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Run
+    blendTreeIndex: 3
+  - animationHeader: Movement
+    animationName: Sprint Idle
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Sprint
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Sprint Forward
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Sprint
+    blendTreeIndex: 1
+  - animationHeader: Movement
+    animationName: Sprint Left
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Sprint
+    blendTreeIndex: 2
+  - animationHeader: Movement
+    animationName: Sprint Right
+    stateName: Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Sprint
+    blendTreeIndex: 3
+  - animationHeader: Movement
+    animationName: Turn 90 Left Crouched
+    stateName: Turn 90 L Crouched
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: 
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Turn 90 Right Crouched
+    stateName: Turn 90 R Crouched
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: 
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Crouched Idle
+    stateName: Crouched Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Crouched
+    blendTreeIndex: 0
+  - animationHeader: Movement
+    animationName: Crouch Forward
+    stateName: Crouched Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Crouched
+    blendTreeIndex: 1
+  - animationHeader: Movement
+    animationName: Crouch Left
+    stateName: Crouched Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Crouched
+    blendTreeIndex: 2
+  - animationHeader: Movement
+    animationName: Crouch Right
+    stateName: Crouched Locomotion Blend
+    stateMachineName: Movement
+    layerName: Base Layer
+    blendTreeName: Crouched
+    blendTreeIndex: 3
+  - animationHeader: Other
+    animationName: Death
+    stateName: Dead
+    stateMachineName: 
+    layerName: Base Layer
+    blendTreeName: 
+    blendTreeIndex: 0
