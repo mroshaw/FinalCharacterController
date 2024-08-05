@@ -19,6 +19,9 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
         public float gamepadLookYMultiplier = 5.0f;
         public float gamepadMoveRunThreshold = 0.5f;
 
+        [Header("Debug")]
+        [SerializeField] private Vector3 movementDirectionDebug;
+
         private PlayerLocomotionInput _playerLocomotionInput;
         private PlayerActionsInput _playerActionInput;
         private Vector2 _cameraRotation = Vector2.zero;
@@ -37,8 +40,8 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
         #region Update Logic
         public override void Update()
         {
-            UpdateActionState();
             base.Update();
+            UpdateActionState();
         }
 
         /// <summary>
@@ -102,14 +105,11 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
                 isMovingLaterally || isMovementInput ? CharacterMovementState.Running : CharacterMovementState.Idling;
 
             CharacterState.SetCharacterMovementState(lateralState);
-
             base.UpdateMovementState();
         }
 
         protected override void HandleVerticalMovement()
         {
-            UpdateVerticalVelocity();
-
             // Handle Jump pressed
             if (_playerLocomotionInput.JumpPressed && CharacterState.InGroundedState() && !CharacterState.InRollingState())
             {
@@ -118,6 +118,7 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
                 VerticalVelocity += Mathf.Sqrt(jumpSpeed * 3 * gravity);
                 JumpedLastFrame = true;
             }
+            UpdateVerticalVelocity();
             base.HandleVerticalMovement();
         }
 
@@ -132,7 +133,7 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
             // If rolling, then ignore the input and move forward
             Vector3 movementDirection = !CharacterState.InRollingState() ? (cameraRightXZ *  _playerLocomotionInput.MovementInput.x +
                                                                             cameraForwardXZ * _playerLocomotionInput.MovementInput.y) : transform.forward;
-
+            movementDirectionDebug = movementDirection;
             return movementDirection;
         }
         #endregion

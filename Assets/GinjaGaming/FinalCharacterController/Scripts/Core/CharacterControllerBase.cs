@@ -1,4 +1,6 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace GinjaGaming.FinalCharacterController.Core
 {
@@ -43,6 +45,12 @@ namespace GinjaGaming.FinalCharacterController.Core
 
         [Header("Environment Details")]
         [SerializeField] private LayerMask groundLayers;
+        [SerializeField] private bool isGroundedDebug;
+
+        [Header("Debug")]
+        [SerializeField] private float lateralAccelerationDebug;
+        [SerializeField] private float lateralMagnitudeDebug;
+        [SerializeField] private Vector3 newVelocityDebug;
 
         /// <summary>
         /// These properties are derived from the controller velocity, and can be used by the Animator
@@ -58,7 +66,7 @@ namespace GinjaGaming.FinalCharacterController.Core
         /// and AIController.
         /// </summary>
         protected CharacterState CharacterState { get; private set; }
-        protected CharacterMovementState LastMovementState { get; set; } = CharacterMovementState.Falling;
+        protected CharacterMovementState LastMovementState { get; set; } = CharacterMovementState.Idling;
         public CharacterController CharacterController
         {
             get => characterController;
@@ -88,6 +96,8 @@ namespace GinjaGaming.FinalCharacterController.Core
         #region Update Logic
         public virtual void Update()
         {
+            isGroundedDebug = IsGrounded();
+
             UpdateMovementState();
             HandleVerticalMovement();
             HandleLateralMovement();
@@ -111,6 +121,8 @@ namespace GinjaGaming.FinalCharacterController.Core
 
         protected virtual void UpdateMovementState()
         {
+            bool isGroundedDebug = IsGrounded();
+
             bool isGrounded = IsGrounded();
 
             // Control Airborne State
@@ -171,6 +183,9 @@ namespace GinjaGaming.FinalCharacterController.Core
                 CharacterState.InWalkingState() ? walkSpeed :
                 CharacterState.InSprintingState() ? sprintSpeed : runSpeed;
 
+            lateralAccelerationDebug = lateralAcceleration;
+            lateralMagnitudeDebug = clampLateralMagnitude;
+
             Vector3 movementDirection = GetMovementDirection();
             Vector3 movementDelta = movementDirection * (lateralAcceleration * Time.deltaTime);
             Vector3 newVelocity = characterController.velocity + movementDelta;
@@ -183,7 +198,8 @@ namespace GinjaGaming.FinalCharacterController.Core
                 : Vector3.zero;
             newVelocity = Vector3.ClampMagnitude(new Vector3(newVelocity.x, 0f, newVelocity.z), clampLateralMagnitude);
             newVelocity.y += VerticalVelocity;
-            newVelocity = !CharacterState.InGroundedState() ? HandleSteepWalls(newVelocity) : newVelocity;
+            // newVelocity = !CharacterState.InGroundedState() ? HandleSteepWalls(newVelocity) : newVelocity;
+            newVelocityDebug = newVelocity;
 
             // Move character (Unity suggests only calling this once per tick)
             if (!CharacterState.InDeadState())

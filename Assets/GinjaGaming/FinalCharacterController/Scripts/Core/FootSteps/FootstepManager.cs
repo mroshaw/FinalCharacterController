@@ -1,3 +1,4 @@
+using GinjaGaming.Core.Extensions;
 using UnityEngine;
 
 namespace GinjaGaming.FinalCharacterController.Core.Footsteps
@@ -7,6 +8,7 @@ namespace GinjaGaming.FinalCharacterController.Core.Footsteps
         #region Class Variables
 
         [Header("Settings")]
+        [SerializeField] private LayerMask triggerLayerMask;
         [SerializeField] private FootstepTrigger[] footstepTriggers;
         [SerializeField] private FootstepSurface defaultSurface;
         [SerializeField] private FootstepSurface[] footstepSurfaces;
@@ -14,8 +16,7 @@ namespace GinjaGaming.FinalCharacterController.Core.Footsteps
         [Header("Spawn Settings")] [Tooltip("Tick this to align spawned footprint decals to the terrain slope.")] public bool alignToTerrainSlope;
 
         [Header("Pool Settings")]
-        [SerializeField] private PrefabPool particleFxPool;
-        [SerializeField] private PrefabPool decalPool;
+        [SerializeField] private FootstepPoolManager poolManager;
 
         [Header("Debug")][SerializeField] private bool debugTextureName;
 
@@ -42,14 +43,27 @@ namespace GinjaGaming.FinalCharacterController.Core.Footsteps
         #endregion
 
         #region Class methods
+        public void SetPoolManager(FootstepPoolManager newPoolManager)
+        {
+            poolManager = newPoolManager;
+        }
         public void SpawnFootStepParticleFx(Vector3 spawnPosition, Quaternion spawnRotation)
         {
-            particleFxPool.SpawnInstance(spawnPosition, spawnRotation);
+            if (!poolManager.ParticlePool)
+            {
+                return;
+            }
+            poolManager.ParticlePool.SpawnInstance(spawnPosition, spawnRotation);
         }
 
         public void SpawnFootprint(Vector3 spawnPosition, Quaternion spawnRotation)
         {
-            decalPool.SpawnInstance(spawnPosition, spawnRotation);
+            if (!poolManager.FootprintPool)
+            {
+                return;
+            }
+
+            poolManager.FootprintPool.SpawnInstance(spawnPosition, spawnRotation);
         }
 
         /// <summary>
@@ -83,6 +97,58 @@ namespace GinjaGaming.FinalCharacterController.Core.Footsteps
             }
             footstepSurface = defaultSurface;
             spawnPosition = footTransform.position;
+        }
+
+        public void ConfigureFootstepTriggers()
+        {
+            Animator animator = GetComponent<Animator>();
+            if (!animator || !animator.isHuman)
+            {
+                return;
+            }
+
+            Transform leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+            Transform rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot);
+
+            footstepTriggers = new[] { ConfigureFoot(leftFoot.gameObject), ConfigureFoot(rightFoot.gameObject) };
+        }
+
+        private FootstepTrigger ConfigureFoot(GameObject footGameObject)
+        {
+
+            SphereCollider existingFootCollider = footGameObject.GetComponent<SphereCollider>();
+            if (existingFootCollider)
+            {
+                DestroyImmediate(existingFootCollider.gameObject);
+            }
+
+            GameObject footstepTriggerGameObject = new GameObject($"Footstep Trigger {footGameObject.name}")
+                {
+                    transform =
+                    {
+                        position = footGameObject.transform.position
+                    }
+                };
+
+            SphereCollider footCollider = footstepTriggerGameObject.EnsureComponent<SphereCollider>();
+            footCollider.isTrigger = true;
+            footCollider.radius = 0.1f / transform.localScale.x;
+
+            AudioSource audioSource = footstepTriggerGameObject.EnsureComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialize = true;
+            audioSource.spatialBlend = 1.0f;
+
+            Rigidbody footRb = footstepTriggerGameObject.EnsureComponent<Rigidbody>();
+            footRb.useGravity = false;
+            footRb.isKinematic = false;
+
+            FootstepTrigger footstepTrigger = footstepTriggerGameObject.EnsureComponent<FootstepTrigger>();
+            footstepTrigger.SetLayers(triggerLayerMask);
+
+            footstepTriggerGameObject.transform.SetParent(footGameObject.transform, true);
+
+            return footstepTrigger;
         }
 
         /// <summary>

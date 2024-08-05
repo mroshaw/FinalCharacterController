@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using GinjaGaming.Core.Extensions;
 using UnityEditor;
 using UnityEditor.Animations;
@@ -13,7 +15,6 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
         [SerializeField] private VisualTreeAsset tree;
 
         private Transform _characterController;
-        private AnimationPresets _animationPresets;
         private CharacterEditorPreset _characterEditorPreset;
 
         private Button _applyButton;
@@ -33,12 +34,6 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             rootVisualElement.Q<ObjectField>("CharGameObject").RegisterValueChangedCallback(evt =>
             {
                 _characterController = evt.newValue as Transform;
-                UpdateApplyButtonState(ValidateUserInput(false));
-            });
-
-            rootVisualElement.Q<ObjectField>("AnimPresets").RegisterValueChangedCallback(evt =>
-            {
-                _animationPresets = evt.newValue as AnimationPresets;
                 UpdateApplyButtonState(ValidateUserInput(false));
             });
 
@@ -65,6 +60,14 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
         {
             _logText.value += $"{logText}\n";
             Debug.Log(logText);
+        }
+
+        private void AddToLog(List<string> logTexts)
+        {
+            foreach (string logText in logTexts)
+            {
+                AddToLog(logText);
+            }
         }
 
         private void ClearLog()
@@ -96,73 +99,47 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
                 return;
             }
 
-            AddToLog("Configuring Animator...");
-            AnimatorController controller = ConfigureAnimator();
-
-            AddToLog("Applying animations...");
-            ConfigureAnims(controller);
-
-            AddToLog("Adding custom components...");
-            _characterEditorPreset.ApplyPreset(_characterController.gameObject);
+            AddToLog("Adding presets...");
+            _characterEditorPreset.ApplyPreset(_characterController.gameObject, out List<string> applyPresetResults);
+            AddToLog(applyPresetResults);
             AddToLog("Done!");
         }
 
         private bool ValidateUserInput(bool showLog)
         {
             bool validationResult = true;
-            string resultLog = "";
+            List <string> resultLogs = new();
+
+            if (!_characterEditorPreset)
+            {
+                validationResult = false;
+                resultLogs.Add("Please select a character preset!");
+            }
+
+            // Validate the Character presets
+            if(_characterEditorPreset && !_characterEditorPreset.Validate(out List<string> validationResultLogs))
+            {
+                validationResult = false;
+                resultLogs.AddRange(validationResultLogs);
+            }
 
             if (!_characterController)
             {
                 validationResult = false;
-                resultLog += "Please select your character model game object!\n";
+                resultLogs.Add("Please select your character model game object!");
             }
 
             if (_characterController && !_characterController.GetComponent<Animator>())
             {
                 validationResult = false;
-                resultLog += "Please add an animator to your character model and ensure the Avatar is set!\n";
-            }
-
-            if (!_animationPresets)
-            {
-                validationResult = false;
-                resultLog += "Please select your animation presets!\n";
-            }
-
-            if (_animationPresets && (!_animationPresets.animMappings || !_animationPresets.animMappings.referenceController))
-            {
-                validationResult = false;
-                resultLog += "Animation presets is not configured! Please check that mappings are assigned and the mapping has a reference controller set!\n";
-            }
-
-            if (!_characterEditorPreset)
-            {
-                validationResult = false;
-                resultLog += "Please select a character preset!\n";
+                resultLogs.Add("Please add an animator to your character model and ensure the Avatar is set!");
             }
 
             if (showLog)
             {
-                AddToLog(resultLog.TrimEnd( '\r', '\n' ));
+                AddToLog(resultLogs);
             }
             return validationResult;
-        }
-
-        private AnimatorController ConfigureAnimator()
-        {
-            Animator animator = _characterController.EnsureComponent<Animator>();
-
-            AnimatorController controller =
-                _animationPresets.animMappings.DuplicateController(_characterController.gameObject.name);
-            animator.runtimeAnimatorController = controller;
-
-            return controller;
-        }
-
-        private void ConfigureAnims(AnimatorController animatorController)
-        {
-            _animationPresets.UpdateAllAnims(animatorController);
         }
     }
 }

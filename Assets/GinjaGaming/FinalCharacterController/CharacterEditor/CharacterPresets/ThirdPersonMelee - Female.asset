@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f71dc5af571104d4eaa4059a9b13994e, type: 3}
-  m_Name: ThirdPersonMelee
+  m_Name: ThirdPersonMelee - Female
   m_EditorClassIdentifier: 
-  characterType: 0
-  cameraPrefab: {fileID: 5230182411440908476, guid: ecf719c1cda06c542a945952b7e63247,
+  playerPrefab: {fileID: 7659288990396401560, guid: 592f3b9fe05705d459fb568e741f7bf9,
     type: 3}
+  animPresets: {fileID: 11400000, guid: 4382a29d15d2efa4a8640d0585c8420a, type: 2}
+  playerLayer: Player
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 1

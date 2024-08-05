@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f71dc5af571104d4eaa4059a9b13994e, type: 3}
+  m_Name: ThirdPersonMelee - Male
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 7659288990396401560, guid: 592f3b9fe05705d459fb568e741f7bf9,
+    type: 3}
+  footstepPoolPrefab: {fileID: 5179019109531595744, guid: e1e92812b18b46f45ac36eb6a97a205c,
+    type: 3}
+  animPresets: {fileID: 11400000, guid: 4382a29d15d2efa4a8640d0585c8420a, type: 2}
+  playerLayer: Player
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 1

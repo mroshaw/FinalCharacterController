@@ -31,6 +31,12 @@ namespace GinjaGaming.FinalCharacterController.Core
         }
         #endregion
 
+        #region Class methods
+        public void SetLayers(LayerMask newLayerMask)
+        {
+            triggerLayers = newLayerMask;
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (CollisionIsValid(other))
@@ -76,5 +82,6 @@ namespace GinjaGaming.FinalCharacterController.Core
         protected abstract void TriggerEnter(Collider other);
         protected abstract void TriggerExit(Collider other);
         protected abstract void TriggerStay(Collider other);
+        #endregion
     }
 }
