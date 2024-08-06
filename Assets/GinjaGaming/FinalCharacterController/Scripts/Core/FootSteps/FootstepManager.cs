@@ -99,58 +99,6 @@ namespace GinjaGaming.FinalCharacterController.Core.Footsteps
             spawnPosition = footTransform.position;
         }
 
-        public void ConfigureFootstepTriggers()
-        {
-            Animator animator = GetComponent<Animator>();
-            if (!animator || !animator.isHuman)
-            {
-                return;
-            }
-
-            Transform leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
-            Transform rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot);
-
-            footstepTriggers = new[] { ConfigureFoot(leftFoot.gameObject), ConfigureFoot(rightFoot.gameObject) };
-        }
-
-        private FootstepTrigger ConfigureFoot(GameObject footGameObject)
-        {
-
-            SphereCollider existingFootCollider = footGameObject.GetComponent<SphereCollider>();
-            if (existingFootCollider)
-            {
-                DestroyImmediate(existingFootCollider.gameObject);
-            }
-
-            GameObject footstepTriggerGameObject = new GameObject($"Footstep Trigger {footGameObject.name}")
-                {
-                    transform =
-                    {
-                        position = footGameObject.transform.position
-                    }
-                };
-
-            SphereCollider footCollider = footstepTriggerGameObject.EnsureComponent<SphereCollider>();
-            footCollider.isTrigger = true;
-            footCollider.radius = 0.1f / transform.localScale.x;
-
-            AudioSource audioSource = footstepTriggerGameObject.EnsureComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.spatialize = true;
-            audioSource.spatialBlend = 1.0f;
-
-            Rigidbody footRb = footstepTriggerGameObject.EnsureComponent<Rigidbody>();
-            footRb.useGravity = false;
-            footRb.isKinematic = false;
-
-            FootstepTrigger footstepTrigger = footstepTriggerGameObject.EnsureComponent<FootstepTrigger>();
-            footstepTrigger.SetLayers(triggerLayerMask);
-
-            footstepTriggerGameObject.transform.SetParent(footGameObject.transform, true);
-
-            return footstepTrigger;
-        }
-
         /// <summary>
         /// Iterates across the registered FootstepSurface instances to see if one matches the provided textureName. If
         /// found, then the FootstepSurface instance is returned, otherwise null.
@@ -252,6 +200,62 @@ namespace GinjaGaming.FinalCharacterController.Core.Footsteps
             }
             return true;
         }
+        #endregion
+
+        #region Editor methods
+        #if UNITY_EDITOR
+        public void ConfigureFootstepTriggers()
+        {
+            Animator animator = GetComponent<Animator>();
+            if (!animator || !animator.isHuman)
+            {
+                return;
+            }
+
+            Transform leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+            Transform rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot);
+
+            footstepTriggers = new[] { ConfigureFoot(leftFoot.gameObject), ConfigureFoot(rightFoot.gameObject) };
+        }
+
+        private FootstepTrigger ConfigureFoot(GameObject footGameObject)
+        {
+            SphereCollider existingFootCollider = footGameObject.GetComponent<SphereCollider>();
+            if (existingFootCollider)
+            {
+                DestroyImmediate(existingFootCollider.gameObject);
+            }
+
+            GameObject footstepTriggerGameObject = new GameObject($"Footstep Trigger {footGameObject.name}")
+            {
+                transform =
+                {
+                    position = footGameObject.transform.position,
+                },
+                layer = footGameObject.layer,
+            };
+
+            SphereCollider footCollider = footstepTriggerGameObject.EnsureComponent<SphereCollider>();
+            footCollider.isTrigger = true;
+            footCollider.radius = 0.1f / transform.localScale.x;
+
+            AudioSource audioSource = footstepTriggerGameObject.EnsureComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialize = true;
+            audioSource.spatialBlend = 1.0f;
+
+            Rigidbody footRb = footstepTriggerGameObject.EnsureComponent<Rigidbody>();
+            footRb.useGravity = false;
+            footRb.isKinematic = false;
+
+            FootstepTrigger footstepTrigger = footstepTriggerGameObject.EnsureComponent<FootstepTrigger>();
+            footstepTrigger.SetLayers(triggerLayerMask);
+
+            footstepTriggerGameObject.transform.SetParent(footGameObject.transform, true);
+
+            return footstepTrigger;
+        }
+        #endif
         #endregion
     }
 }
