@@ -8,6 +8,10 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
     public class PlayerController : CharacterControllerBase
     {
         #region Class Variables
+        [Header("Animation")]
+        public float playerModelRotationSpeed = 10f;
+        public float rotateToTargetTime = 0.67f;
+
         [Header("Camera Settings")]
         [SerializeField] private Camera playerCamera;
         public float lookSenseH = 0.1f;
@@ -17,14 +21,17 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
         [Header("Gamepad Settings")]
         public float gamepadLookXMultiplier = 5.0f;
         public float gamepadLookYMultiplier = 5.0f;
-        public float gamepadMoveRunThreshold = 0.5f;
 
-        [Header("Debug")]
-        [SerializeField] private Vector3 movementDirectionDebug;
+        // Used by Player Animation to determine if player is rotating
+        public float RotationMismatch { get; private set; }
+        public bool IsRotatingToTarget { get; private set; }
 
         private PlayerLocomotionInput _playerLocomotionInput;
         private PlayerActionsInput _playerActionInput;
+
         private Vector2 _cameraRotation = Vector2.zero;
+        private float _rotatingToTargetTimer;
+        private bool _isRotatingClockwise;
 
         #endregion
 
@@ -40,101 +47,64 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
         #region Update Logic
         public override void Update()
         {
-            base.Update();
+            HandleVerticalInput();
+            HandleLateralInput();
             UpdateActionState();
+            base.Update();
         }
 
         /// <summary>
         /// This is the 'Player Action' state machine. This controls what actions the player can and will perform,
         /// based on current action states, and from and to permitted action states.
         /// </summary>
-        protected override void UpdateActionState()
+        private void UpdateActionState()
         {
             if (_playerActionInput.AttackPressed)
             {
                 _playerActionInput.SetGatherPressedFalse();
+                // Tell the CharacterController we want to attack
                 CharacterState.SetCharacterActionState(CharacterActionState.Attacking);
             }
 
-            if (_playerActionInput.GatherPressed && CharacterState.CurrentCharacterActionState == CharacterActionState.Idle)
+
+            if (_playerActionInput.GatherPressed && CharacterState.CurrentCharacterActionState == CharacterActionState.None)
             {
                 CharacterState.SetCharacterActionState(CharacterActionState.Gathering);
             }
 
             if (!_playerActionInput.GatherPressed && !_playerActionInput.AttackPressed)
             {
-                CharacterState.SetCharacterActionState(CharacterActionState.Idle);
+                CharacterState.SetCharacterActionState(CharacterActionState.None);
             }
         }
 
-        /// <summary>
-        /// This is the 'Player Movement' state machine. This method therefore controls what state the player is in, and from
-        /// and to which states the player transitions, typically based on input received.
-        /// </summary>
-        protected override void UpdateMovementState()
+        private void HandleLateralInput()
         {
-            // Process player input
-            bool canRun = CanRun();
-            bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero; //order
-            bool isMovingLaterally = IsMovingLaterally(); //matters
-            bool isSprinting = isMovingLaterally && (!canRun || _playerLocomotionInput.SprintToggledOn);
-            bool isCrouching = _playerLocomotionInput.CrouchToggledOn;
-            bool isRolling = _playerLocomotionInput.RollPressed;
-            bool isWalking;
-            if (_playerLocomotionInput.ActiveDevice is Gamepad)
+            Vector3 cameraForwardXZ = new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
+            Vector3 cameraRightXZ = new Vector3(playerCamera.transform.right.x, 0f, playerCamera.transform.right.z).normalized;
+            Vector3 movementDirection = cameraRightXZ * _playerLocomotionInput.MovementInput.x + cameraForwardXZ * _playerLocomotionInput.MovementInput.y;
+
+            // Let the CharacterController know we want to move
+            LateralVelocityDirection = movementDirection;
+
+            if (_playerLocomotionInput.RollPressed)
             {
-                isWalking = _playerLocomotionInput.MovementInput.y < gamepadMoveRunThreshold;
+                RequestMovementStateChange = CharacterMovementStateChange.Rolling;
             }
-            else
+            else if (_playerLocomotionInput.CrouchToggledOn)
             {
-                isWalking = isMovingLaterally && (!canRun || _playerLocomotionInput.WalkToggledOn);
+                RequestMovementStateChange = CharacterMovementStateChange.Crouching;
             }
-
-            // Cancel roll if not able to do so
-            if (_playerLocomotionInput.RollPressed && !CanRoll())
-            {
-                _playerLocomotionInput.SetRollPressedFalse();
-            }
-
-            LastMovementState = CharacterState.CurrentCharacterMovementState;
-
-            CharacterMovementState lateralState = isRolling ? CharacterMovementState.Rolling :
-                isCrouching ? CharacterMovementState.Crouching :
-                isWalking ? CharacterMovementState.Walking :
-                isSprinting ? CharacterMovementState.Sprinting :
-                isMovingLaterally || isMovementInput ? CharacterMovementState.Running : CharacterMovementState.Idling;
-
-            CharacterState.SetCharacterMovementState(lateralState);
-            base.UpdateMovementState();
         }
 
-        protected override void HandleVerticalMovement()
+        private void HandleVerticalInput()
         {
             // Handle Jump pressed
-            if (_playerLocomotionInput.JumpPressed && CharacterState.InGroundedState() && !CharacterState.InRollingState())
+            if (_playerLocomotionInput.JumpPressed)
             {
-                // Cancel crouch
-                _playerLocomotionInput.SetCrouchToggleToFalse();
-                VerticalVelocity += Mathf.Sqrt(jumpSpeed * 3 * gravity);
-                JumpedLastFrame = true;
+                // Let the CharacterController know that we want to jump
+                RequestMovementStateChange = CharacterMovementStateChange.Jump;
             }
-            UpdateVerticalVelocity();
-            base.HandleVerticalMovement();
-        }
-
-        protected override Vector3 GetMovementDirection()
-        {
-            // Derive movement direction from the player camera
-            Vector3 cameraForwardXZ =
-                new Vector3(playerCamera.transform.forward.x, 0f, playerCamera.transform.forward.z).normalized;
-            Vector3 cameraRightXZ = new Vector3(playerCamera.transform.right.x, 0f, playerCamera.transform.right.z)
-                .normalized;
-
-            // If rolling, then ignore the input and move forward
-            Vector3 movementDirection = !CharacterState.InRollingState() ? (cameraRightXZ *  _playerLocomotionInput.MovementInput.x +
-                                                                            cameraForwardXZ * _playerLocomotionInput.MovementInput.y) : transform.forward;
-            movementDirectionDebug = movementDirection;
-            return movementDirection;
         }
         #endregion
 
@@ -142,6 +112,32 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
         private void LateUpdate()
         {
             UpdateCameraRotation();
+        }
+
+        private void UpdateIdleRotation(float rotationTolerance)
+        {
+            // Initiate new rotation direction
+            if (Mathf.Abs(RotationMismatch) > rotationTolerance)
+            {
+                _rotatingToTargetTimer = rotateToTargetTime;
+                _isRotatingClockwise = RotationMismatch > rotationTolerance;
+            }
+
+            _rotatingToTargetTimer -= Time.deltaTime;
+
+            // Rotate character
+            if (_isRotatingClockwise && RotationMismatch > 0f ||
+                !_isRotatingClockwise && RotationMismatch < 0f)
+            {
+                RotateToTarget();
+            }
+        }
+
+        private void RotateToTarget()
+        {
+            Quaternion targetRotationX = Quaternion.Euler(0f, TargetRotation.x, 0f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotationX,
+                playerModelRotationSpeed * Time.deltaTime);
         }
 
         private void UpdateCameraRotation()
@@ -161,7 +157,7 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
 
             float rotationTolerance = 90f;
             bool isIdling = CharacterState.CurrentCharacterMovementState == CharacterMovementState.Idling;
-            IsRotatingToTarget = RotatingToTargetTimer > 0;
+            IsRotatingToTarget = _rotatingToTargetTimer > 0;
 
             if (!CharacterState.InDeadState())
             {
@@ -185,15 +181,11 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
             float sign = Mathf.Sign(Vector3.Dot(crossProduct, transform.up));
             RotationMismatch = sign * Vector3.Angle(transform.forward, camForwardProjectedXZ);
         }
-        #endregion
 
-        #region State Checks
-        protected override bool CanRun()
-        {
-            // This means player is moving diagonally at 45 degrees or forward, if so, we can run
-            return _playerLocomotionInput.MovementInput.y >= Mathf.Abs(_playerLocomotionInput.MovementInput.x);
-        }
-
+        /// <summary>
+        /// Can be used to change the camera, for example if instantiating new character after death
+        /// </summary>
+        /// <param name="newCamera"></param>
         public void SetCamera(Camera newCamera)
         {
             playerCamera = newCamera;

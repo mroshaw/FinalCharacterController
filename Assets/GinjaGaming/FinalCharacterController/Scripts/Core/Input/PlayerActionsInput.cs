@@ -11,7 +11,6 @@ namespace GinjaGaming.FinalCharacterController.Core.Input
         private CharacterState _characterState;
         public bool GatherPressed { get; private set; }
         public bool AttackPressed { get; private set; }
-        public bool RollPressed { get; private set; }
         #endregion
 
         #region Startup
@@ -54,11 +53,6 @@ namespace GinjaGaming.FinalCharacterController.Core.Input
             {
                 GatherPressed = false;
             }
-
-            if(_characterState.CurrentCharacterMovementState == CharacterMovementState.Falling)
-            {
-                RollPressed = false;
-            }
         }
 
         public void SetGatherPressedFalse()
@@ -89,15 +83,6 @@ namespace GinjaGaming.FinalCharacterController.Core.Input
 
             AttackPressed = true;
         }
-
-        public void OnRolling(InputAction.CallbackContext context)
-        {
-            if (!context.performed)
-                return;
-
-            RollPressed = true;
-        }
-
         #endregion
     }
 }

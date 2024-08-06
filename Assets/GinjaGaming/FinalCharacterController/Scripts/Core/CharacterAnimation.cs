@@ -11,7 +11,8 @@ namespace GinjaGaming.FinalCharacterController.Core
         [SerializeField] private float locomotionBlendSpeed = 4f;
 
         private CharacterState _characterState;
-        private CharacterControllerBase _characterController;
+        protected CharacterControllerBase CharacterController { get; private set; }
+        protected Animator Animator => animator;
 
         // Locomotion
         private static readonly int LateralSpeedHash = Animator.StringToHash("LateralSpeed");
@@ -34,18 +35,14 @@ namespace GinjaGaming.FinalCharacterController.Core
         private static readonly int IsInjured = Animator.StringToHash("IsInjured");
         private static readonly int IsDead = Animator.StringToHash("IsDead");
 
-        // Camera/Rotation
-        private static readonly int IsRotatingToTargetHash = Animator.StringToHash("IsRotatingToTarget");
-        private static readonly int RotationMismatchHash = Animator.StringToHash("RotationMismatch");
-
         private Vector3 _currentBlendInput = Vector3.zero;
         #endregion
 
         #region Startup
-        private void Awake()
+        protected virtual void Awake()
         {
             _characterState = GetComponent<CharacterState>();
-            _characterController = GetComponent<CharacterControllerBase>();
+            CharacterController = GetComponent<CharacterControllerBase>();
             _actionHashes = new int[] { IsGatheringHash };
         }
         #endregion
@@ -56,7 +53,7 @@ namespace GinjaGaming.FinalCharacterController.Core
             UpdateAnimationState();
         }
 
-        private void UpdateAnimationState()
+        protected virtual void UpdateAnimationState()
         {
             bool isIdling = _characterState.CurrentCharacterMovementState == CharacterMovementState.Idling;
             bool isJumping = _characterState.CurrentCharacterMovementState == CharacterMovementState.Jumping;
@@ -73,7 +70,7 @@ namespace GinjaGaming.FinalCharacterController.Core
             bool isInjured = _characterState.CurrentCharacterHealthState == CharacterHealthState.Injured;
             bool isDead = _characterState.CurrentCharacterHealthState == CharacterHealthState.Dead;
 
-            Vector3 inputTarget = new Vector3(_characterController.LateralSpeed, _characterController.VerticalSpeed, _characterController.ForwardSpeed);
+            Vector3 inputTarget = new Vector3(CharacterController.LateralSpeed, CharacterController.VerticalSpeed, CharacterController.ForwardSpeed);
             _currentBlendInput = Vector3.Lerp(_currentBlendInput, inputTarget, locomotionBlendSpeed * Time.deltaTime);
 
             animator.SetBool(IsInjured, isInjured);
@@ -83,7 +80,6 @@ namespace GinjaGaming.FinalCharacterController.Core
             animator.SetBool(IsIdlingHash, isIdling);
             animator.SetBool(IsFallingHash, isFalling);
             animator.SetBool(IsJumpingHash, isJumping);
-            animator.SetBool(IsRotatingToTargetHash, _characterController.IsRotatingToTarget);
 
             animator.SetBool(IsAttackingHash, isAttacking);
             animator.SetBool(IsGatheringHash, isGathering);
@@ -95,7 +91,6 @@ namespace GinjaGaming.FinalCharacterController.Core
             animator.SetFloat(LateralSpeedHash, _currentBlendInput.x);
             animator.SetFloat(ForwardSpeedHash, _currentBlendInput.z);
             animator.SetFloat(VerticalSpeedHash, _currentBlendInput.y);
-            animator.SetFloat(RotationMismatchHash, _characterController.RotationMismatch);
         }
         #endregion
 

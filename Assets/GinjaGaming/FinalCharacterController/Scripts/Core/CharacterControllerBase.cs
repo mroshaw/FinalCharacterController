@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Codice.CM.Client.Differences;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,9 +17,6 @@ namespace GinjaGaming.FinalCharacterController.Core
         #region Class Variables
         [Header("Components")]
         [SerializeField] private CharacterController characterController;
-
-        public float RotationMismatch { get; set; }
-        public bool IsRotatingToTarget { get; set; }
 
         [Header("Base Movement")]
         public float walkAcceleration = 25f;
@@ -39,18 +37,22 @@ namespace GinjaGaming.FinalCharacterController.Core
         public float jumpSpeed = 0.8f;
         public float movingThreshold = 0.01f;
 
-        [Header("Animation")]
-        public float playerModelRotationSpeed = 10f;
-        public float rotateToTargetTime = 0.67f;
-
         [Header("Environment Details")]
         [SerializeField] private LayerMask groundLayers;
         [SerializeField] private bool isGroundedDebug;
 
-        [Header("Debug")]
-        [SerializeField] private float lateralAccelerationDebug;
-        [SerializeField] private float lateralMagnitudeDebug;
-        [SerializeField] private Vector3 newVelocityDebug;
+        [Header("Debug Speed")]
+        [SerializeField] private float forwardSpeedDebug;
+        [SerializeField] private float verticalSpeedDebug;
+        [SerializeField] private float lateralSpeedDebug;
+        [Header("Debug Targets")]
+        [SerializeField] private float verticalVelocityDebug;
+        [SerializeField] private Vector3 lateralVelocityDirectionDebug;
+        [SerializeField] private Vector3 lateralVelocityDebug;
+        [SerializeField] private Vector3 charControllerVelocityDebug;
+
+        // Use this in parent classes to request a change in state - e.g. to crouch, roll or jump
+        protected CharacterMovementStateChange RequestMovementStateChange;
 
         /// <summary>
         /// These properties are derived from the controller velocity, and can be used by the Animator
@@ -73,102 +75,156 @@ namespace GinjaGaming.FinalCharacterController.Core
             set => characterController = value;
         }
 
-        protected bool JumpedLastFrame { get; set; }
-        protected float VerticalVelocity { get; set; }
-        private float AntiBump { get; set; }
-        private float StepOffset { get; set; }
-        protected float RotatingToTargetTimer { get; private set; }
-
+        // Set by parent to control target lateral and vertical movement
+        protected Vector3 LateralVelocityDirection = Vector3.zero;
         protected Vector2 TargetRotation  = Vector2.zero;
 
-        private bool _isRotatingClockwise;
+        private bool _jumpedLastFrame;
+        private float _antiBump;
+        private float _stepOffset;
+        private float _verticalSpeed;
+        private Vector3 _lateralVelocity = Vector3.zero;
         #endregion
 
         #region Startup
         public virtual void Awake()
         {
             CharacterState = GetComponent<CharacterState>();
-            AntiBump = sprintSpeed;
-            StepOffset = characterController.stepOffset;
+            _antiBump = sprintSpeed;
+            _stepOffset = characterController.stepOffset;
         }
         #endregion
 
         #region Update Logic
         public virtual void Update()
         {
-            isGroundedDebug = IsGrounded();
-
+            #if UNITY_EDITOR
+            UpdateDebugProperties();
+            #endif
+            CalculateCharacterSpeeds();
             UpdateMovementState();
             HandleVerticalMovement();
             HandleLateralMovement();
-            UpdateCharacterVelocities();
+            Move();
+            RequestMovementStateChange = CharacterMovementStateChange.None;
         }
 
         /// <summary>
         /// Derive velocities in each plane, so these can be used by the Animator to drive BlendTree
         /// animations.
         /// </summary>
-        protected virtual void UpdateCharacterVelocities()
+        private void CalculateCharacterSpeeds()
         {
-            ForwardSpeed = transform.InverseTransformDirection(characterController.velocity).z;
-            LateralSpeed = transform.InverseTransformDirection(characterController.velocity).x;
-            VerticalSpeed = transform.InverseTransformDirection(characterController.velocity).y;
+            // ForwardSpeed = transform.InverseTransformDirection(characterController.velocity).z;
+            ForwardSpeed = (transform.forward * Vector3.Dot(transform.forward, characterController.velocity)).magnitude;
+            // LateralSpeed = transform.InverseTransformDirection(characterController.velocity).x;
+            LateralSpeed = (transform.right * Vector3.Dot(transform.right, characterController.velocity)).magnitude;
+            // VerticalSpeed = transform.InverseTransformDirection(characterController.velocity).y;
+            VerticalSpeed = (transform.up * Vector3.Dot(transform.up, characterController.velocity)).magnitude;
         }
 
-        protected virtual void UpdateActionState()
+        /// <summary>
+        /// Determines the MovementState for the character. Can only be in one such state at a time. Uses
+        /// the characters velocity to determine certain states, or can be influenced by public boolean setters to
+        /// request a state change - for example, rolling or crouched states.
+        /// </summary>
+        private void UpdateMovementState()
         {
-        }
+            LastMovementState = CharacterState.CurrentCharacterMovementState;
 
-        protected virtual void UpdateMovementState()
-        {
-            bool isGroundedDebug = IsGrounded();
+            CharacterMovementStateChange requestMovementChange = RequestMovementStateChange;
 
             bool isGrounded = IsGrounded();
 
-            // Control Airborne State
-            if ((!isGrounded || JumpedLastFrame) && CharacterController.velocity.y > 0.0f)
+            // If rising or falling, player must be in a vertical movement state
+            // i.e. Jumping or Falling
+            if ((!isGrounded || _jumpedLastFrame) && _verticalSpeed > 0.0f)
             {
                 CharacterState.SetCharacterMovementState(CharacterMovementState.Jumping);
-                JumpedLastFrame = false;
+                _jumpedLastFrame = false;
                 CharacterController.stepOffset = 0f;
+                return;
             }
-            else if ((!isGrounded || JumpedLastFrame) && CharacterController.velocity.y <= 0f)
+
+            if ((!isGrounded || _jumpedLastFrame) && _verticalSpeed < 0f)
             {
                 CharacterState.SetCharacterMovementState(CharacterMovementState.Falling);
-                JumpedLastFrame = false;
+                _jumpedLastFrame = false;
                 CharacterController.stepOffset = 0f;
+                return;
+            }
+
+            // Handle a request for a state change
+
+            // Check if character can move to the rolling state
+            if (requestMovementChange == CharacterMovementStateChange.Rolling && CanRoll())
+            {
+                CharacterState.SetCharacterMovementState(CharacterMovementState.Rolling);
+                CharacterController.stepOffset = _stepOffset;
+                return;
+            }
+
+            if (requestMovementChange == CharacterMovementStateChange.Crouching && CanCrouch())
+            {
+                CharacterState.SetCharacterMovementState(CharacterMovementState.Crouching);
+                CharacterController.stepOffset = _stepOffset;
+                return;
+            }
+
+            // Player is grounded, not rolling or crouching, so must be in a ground based movement state
+            if (ForwardSpeed > 0 && ForwardSpeed <= walkSpeed)
+            {
+                CharacterState.SetCharacterMovementState(CharacterMovementState.Walking);
+            }
+            else if (ForwardSpeed > walkSpeed && ForwardSpeed <= runSpeed)
+            {
+                CharacterState.SetCharacterMovementState(CharacterMovementState.Running);
+            }
+            else if (ForwardSpeed > runSpeed && ForwardSpeed <= sprintSpeed)
+            {
+                CharacterState.SetCharacterMovementState(CharacterMovementState.Sprinting);
             }
             else
             {
-                CharacterController.stepOffset = StepOffset;
+                CharacterState.SetCharacterMovementState(CharacterMovementState.Idling);
             }
+            CharacterController.stepOffset = _stepOffset;
+
         }
 
-        protected virtual void HandleVerticalMovement()
+        private void HandleVerticalMovement()
         {
-            if (CharacterState.IsStateGroundedState(LastMovementState) && !CharacterState.InGroundedState())
+            bool isGrounded = IsGrounded();
+
+            // Falling
+            _verticalSpeed -= gravity * Time.deltaTime;
+
+            if (isGrounded && _verticalSpeed < 0)
             {
-                VerticalVelocity += AntiBump;
+                _verticalSpeed = -_antiBump;
+            }
+
+            // Jump, if requested
+            if (RequestMovementStateChange == CharacterMovementStateChange.Jump && CanJump())
+            {
+                _verticalSpeed+= _verticalSpeed + Mathf.Sqrt(jumpSpeed * 3 * gravity);
+                _jumpedLastFrame = true;
+            }
+
+            // Give the character a bit of a bump, if moving from grounded to not grounded state
+            if (CharacterState.IsStateGroundedState(LastMovementState) && !isGrounded)
+            {
+                _verticalSpeed += _antiBump;
             }
 
             // Clamp at terminal velocity
-            if (Mathf.Abs(VerticalVelocity) > Mathf.Abs(terminalVelocity))
+            if (Mathf.Abs(_verticalSpeed) > Mathf.Abs(terminalVelocity))
             {
-                VerticalVelocity = -1f * Mathf.Abs(terminalVelocity);
+                _verticalSpeed = -1f * Mathf.Abs(terminalVelocity);
             }
         }
 
-        protected virtual void UpdateVerticalVelocity()
-        {
-            VerticalVelocity -= gravity * Time.deltaTime;
-
-            if (CharacterState.InGroundedState() && VerticalVelocity < 0)
-            {
-                VerticalVelocity = -AntiBump;
-            }
-        }
-
-        protected virtual void HandleLateralMovement()
+        private void HandleLateralMovement()
         {
             // State dependent acceleration and speed
             float lateralAcceleration = !CharacterState.InGroundedState() ? inAirAcceleration :
@@ -183,11 +239,8 @@ namespace GinjaGaming.FinalCharacterController.Core
                 CharacterState.InWalkingState() ? walkSpeed :
                 CharacterState.InSprintingState() ? sprintSpeed : runSpeed;
 
-            lateralAccelerationDebug = lateralAcceleration;
-            lateralMagnitudeDebug = clampLateralMagnitude;
-
-            Vector3 movementDirection = GetMovementDirection();
-            Vector3 movementDelta = movementDirection * (lateralAcceleration * Time.deltaTime);
+            // Take the lateral velocity direction from the parent
+            Vector3 movementDelta = LateralVelocityDirection * (lateralAcceleration * Time.deltaTime);
             Vector3 newVelocity = characterController.velocity + movementDelta;
 
             // Add drag to character
@@ -197,31 +250,29 @@ namespace GinjaGaming.FinalCharacterController.Core
                 ? newVelocity - currentDrag
                 : Vector3.zero;
             newVelocity = Vector3.ClampMagnitude(new Vector3(newVelocity.x, 0f, newVelocity.z), clampLateralMagnitude);
-            newVelocity.y += VerticalVelocity;
-            // newVelocity = !CharacterState.InGroundedState() ? HandleSteepWalls(newVelocity) : newVelocity;
-            newVelocityDebug = newVelocity;
 
+            // Set target velocity
+            _lateralVelocity = !CharacterState.InGroundedState() ? HandleSteepWalls(newVelocity) : newVelocity;
+        }
+
+        private void Move()
+        {
             // Move character (Unity suggests only calling this once per tick)
             if (!CharacterState.InDeadState())
             {
+                Vector3 newVelocity = _lateralVelocity;
+                newVelocity.y += _verticalSpeed;
                 characterController.Move(newVelocity * Time.deltaTime);
             }
         }
 
-        /// <summary>
-        /// Implement this in the parent class to return the direction vector for the character. This can, for example,
-        /// use end-user input for a PlayerController, or results from a NavMeshAgent for an AIController.
-        /// </summary>
-        /// <returns></returns>
-        protected abstract Vector3 GetMovementDirection();
-
-        protected virtual Vector3 HandleSteepWalls(Vector3 velocity)
+        private Vector3 HandleSteepWalls(Vector3 velocity)
         {
             Vector3 normal = CharacterControllerUtils.GetNormalWithSphereCast(characterController, groundLayers);
             float angle = Vector3.Angle(normal, Vector3.up);
             bool validAngle = angle <= characterController.slopeLimit;
 
-            if (!validAngle && VerticalVelocity < 0f)
+            if (!validAngle && _verticalSpeed < 0f)
                 velocity = Vector3.ProjectOnPlane(velocity, normal);
 
             return velocity;
@@ -229,51 +280,14 @@ namespace GinjaGaming.FinalCharacterController.Core
 
         #endregion
 
-        #region Late Update Logic
-        protected virtual void UpdateIdleRotation(float rotationTolerance)
-        {
-            // Initiate new rotation direction
-            if (Mathf.Abs(RotationMismatch) > rotationTolerance)
-            {
-                RotatingToTargetTimer = rotateToTargetTime;
-                _isRotatingClockwise = RotationMismatch > rotationTolerance;
-            }
-
-            RotatingToTargetTimer -= Time.deltaTime;
-
-            // Rotate character
-            if (_isRotatingClockwise && RotationMismatch > 0f ||
-                !_isRotatingClockwise && RotationMismatch < 0f)
-            {
-                RotateToTarget();
-            }
-        }
-
-        protected virtual void RotateToTarget()
-        {
-            Quaternion targetRotationX = Quaternion.Euler(0f, TargetRotation.x, 0f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotationX,
-                playerModelRotationSpeed * Time.deltaTime);
-        }
-
-        #endregion
         #region State Checks
-
-        protected virtual bool IsMovingLaterally()
-        {
-            Vector3 lateralVelocity = new Vector3(characterController.velocity.x, 0f, characterController.velocity.z);
-
-            return lateralVelocity.magnitude > movingThreshold;
-        }
-
-        protected virtual bool IsGrounded()
+        private bool IsGrounded()
         {
             bool grounded = CharacterState.InGroundedState() ? IsGroundedWhileGrounded() : IsGroundedWhileAirborne();
-
             return grounded;
         }
 
-        protected virtual bool IsGroundedWhileGrounded()
+        private bool IsGroundedWhileGrounded()
         {
             Vector3 spherePosition = new Vector3(transform.position.x,
                 transform.position.y - characterController.radius, transform.position.z);
@@ -284,7 +298,7 @@ namespace GinjaGaming.FinalCharacterController.Core
             return grounded;
         }
 
-        protected virtual bool IsGroundedWhileAirborne()
+        private bool IsGroundedWhileAirborne()
         {
             Vector3 normal = CharacterControllerUtils.GetNormalWithSphereCast(characterController, groundLayers);
             float angle = Vector3.Angle(normal, Vector3.up);
@@ -293,24 +307,49 @@ namespace GinjaGaming.FinalCharacterController.Core
             return characterController.isGrounded && validAngle;
         }
 
-        protected virtual bool CanRun()
+        protected bool CanRun()
         {
             // Character is moving at less than a 45 degree angle, and so can run.
             return ForwardSpeed >= Mathf.Abs(LateralSpeed);
         }
 
-        protected virtual bool CanRoll()
+        private bool CanRoll()
         {
             return CharacterState.CurrentCharacterMovementState != CharacterMovementState.Jumping &&
                    CharacterState.CurrentCharacterMovementState != CharacterMovementState.Falling;
         }
+
+        private bool CanCrouch()
+        {
+            return CharacterState.CurrentCharacterMovementState != CharacterMovementState.Jumping &&
+                   CharacterState.CurrentCharacterMovementState != CharacterMovementState.Falling &&
+                   CharacterState.CurrentCharacterMovementState != CharacterMovementState.Rolling;
+        }
+
+        private bool CanJump()
+        {
+            return IsGrounded() &&
+                   CharacterState.CurrentCharacterMovementState != CharacterMovementState.Rolling;
+        }
         #endregion
 
-        #region Editor Helper methods
+        #region Editor methods
         #if UNITY_EDITOR
         public void SetGroundLayer(LayerMask layerMask)
         {
             groundLayers = layerMask;
+        }
+
+        private void UpdateDebugProperties()
+        {
+            isGroundedDebug = IsGrounded();
+            forwardSpeedDebug = ForwardSpeed;
+            verticalSpeedDebug = VerticalSpeed;
+            lateralSpeedDebug = LateralSpeed;
+            verticalVelocityDebug = _verticalSpeed;
+            lateralVelocityDebug = _lateralVelocity;
+            lateralVelocityDirectionDebug = LateralVelocityDirection;
+            charControllerVelocityDebug = characterController.velocity;
         }
         #endif
         #endregion

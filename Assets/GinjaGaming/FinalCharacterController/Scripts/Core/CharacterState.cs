@@ -8,42 +8,51 @@ namespace GinjaGaming.FinalCharacterController.Core
     /// </summary>
     public enum CharacterMovementState
     {
-        Idling = 0,
-        Walking = 1,
-        Running = 2,
-        Sprinting = 3,
-        Jumping = 4,
-        Falling = 5,
-        Strafing = 6,
-        Rolling = 7,
-        Crouching = 8,
+        None,
+        Idling,
+        Walking,
+        Running,
+        Sprinting,
+        Jumping,
+        Falling,
+        Strafing,
+        Rolling,
+        Crouching,
+    }
+
+    public enum CharacterMovementStateChange
+    {
+        None,
+        Rolling,
+        Crouching,
+        Jump
     }
 
     public enum CharacterActionState
     {
-        Idle = 0,
-        Attacking = 1,
-        Gathering = 2,
+        None,
+        Attacking,
+        Gathering,
     }
 
     public enum CharacterHealthState
     {
-        Fine = 0,
-        Injured = 1,
-        Dead = 2,
+        Fine,
+        Injured,
+        Dead,
     }
 
     public class CharacterState : MonoBehaviour
     {
         [field: SerializeField] public CharacterMovementState CurrentCharacterMovementState { get; private set; } = CharacterMovementState.Idling;
-        [field: SerializeField] public CharacterActionState CurrentCharacterActionState { get; private set; } = CharacterActionState.Idle;
+        [field: SerializeField] public CharacterActionState CurrentCharacterActionState { get; private set; } = CharacterActionState.None;
         [field: SerializeField] public CharacterHealthState CurrentCharacterHealthState { get; private set; } = CharacterHealthState.Fine;
 
         #region Class methods
         public void ResetStates()
         {
             CurrentCharacterMovementState = CharacterMovementState.Idling;
-            CurrentCharacterActionState = CharacterActionState.Idle;
+            CurrentCharacterActionState = CharacterActionState.None;
             CurrentCharacterHealthState = CharacterHealthState.Fine;
         }
 
@@ -70,7 +79,7 @@ namespace GinjaGaming.FinalCharacterController.Core
         public void SetCharacterDeadState()
         {
             CurrentCharacterMovementState = CharacterMovementState.Idling;
-            CurrentCharacterActionState = CharacterActionState.Idle;
+            CurrentCharacterActionState = CharacterActionState.None;
             CurrentCharacterHealthState = CharacterHealthState.Dead;
         }
 

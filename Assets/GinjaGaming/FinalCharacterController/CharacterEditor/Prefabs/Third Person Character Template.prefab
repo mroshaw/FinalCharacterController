@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1439091841482816785}
   - component: {fileID: 4284287056708684046}
   - component: {fileID: 6102892764891639120}
+  - component: {fileID: 8675641671691920478}
   m_Layer: 6
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -116,6 +117,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: 0
+--- !u!114 &8675641671691920478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895315613119547063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CameraRadius: 0.4
+  Decollision:
+    Enabled: 0
+    ObstacleLayers:
+      serializedVersion: 2
+      m_Bits: 1
+    UseFollowTarget:
+      Enabled: 0
+      YOffset: 0
+    Damping: 0.5
+    SmoothingTime: 0
+  TerrainResolution:
+    Enabled: 1
+    TerrainLayers:
+      serializedVersion: 2
+      m_Bits: 1
+    MaximumRaycast: 10
+    Damping: 0.5
 --- !u!1 &3424296752667985317
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,8 +331,8 @@ GameObject:
   - component: {fileID: 5136991529859273868}
   - component: {fileID: 7239544915881305962}
   - component: {fileID: 1431172499999226509}
-  - component: {fileID: 9125211608370419541}
   - component: {fileID: 3946813838856184961}
+  - component: {fileID: 913392217883972621}
   - component: {fileID: 4892311752526935311}
   - component: {fileID: 1044942949417884596}
   - component: {fileID: 744160769383611437}
@@ -469,8 +500,8 @@ MonoBehaviour:
   runSpeed: 4
   sprintAcceleration: 50
   sprintSpeed: 7
-  crouchAcceleration: 15
-  crouchSpeed: 1.2
+  crouchAcceleration: 25
+  crouchSpeed: 2
   rollingAcceleration: 25
   rollingSpeed: 2.5
   inAirAcceleration: 25
@@ -478,25 +509,27 @@ MonoBehaviour:
   inAirDrag: 5
   gravity: 25
   terminalVelocity: 50
-  jumpSpeed: 0.8
+  jumpSpeed: 3
   movingThreshold: 0.01
-  playerModelRotationSpeed: 10
-  rotateToTargetTime: 0.67
   groundLayers:
     serializedVersion: 2
     m_Bits: 1
   isGroundedDebug: 0
-  lateralAccelerationDebug: 0
-  lateralMagnitudeDebug: 0
-  newVelocityDebug: {x: 0, y: 0, z: 0}
+  forwardSpeedDebug: 0
+  verticalSpeedDebug: 0
+  lateralSpeedDebug: 0
+  verticalVelocityDebug: 0
+  lateralVelocityDirectionDebug: {x: 0, y: 0, z: 0}
+  lateralVelocityDebug: {x: 0, y: 0, z: 0}
+  charControllerVelocityDebug: {x: 0, y: 0, z: 0}
+  playerModelRotationSpeed: 10
+  rotateToTargetTime: 0.67
   playerCamera: {fileID: 7216879170583909504}
   lookSenseH: 0.1
   lookSenseV: 0.1
   lookLimitV: 89
   gamepadLookXMultiplier: 5
   gamepadLookYMultiplier: 5
-  gamepadMoveRunThreshold: 0.5
-  movementDirectionDebug: {x: 0, y: 0, z: 0}
 --- !u!114 &7239544915881305962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -526,20 +559,6 @@ MonoBehaviour:
   <CurrentCharacterMovementState>k__BackingField: 0
   <CurrentCharacterActionState>k__BackingField: 0
   <CurrentCharacterHealthState>k__BackingField: 0
---- !u!114 &9125211608370419541
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7659288990396401560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d015a2dfbd3791849a8c184d57c68c14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  locomotionBlendSpeed: 4
 --- !u!114 &3946813838856184961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -552,6 +571,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b5e1f0ea1187994c8603b613b63e2b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &913392217883972621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7659288990396401560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1ece17790e1e341bfd6e1ae267a090, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  locomotionBlendSpeed: 4
 --- !u!114 &4892311752526935311
 MonoBehaviour:
   m_ObjectHideFlags: 0

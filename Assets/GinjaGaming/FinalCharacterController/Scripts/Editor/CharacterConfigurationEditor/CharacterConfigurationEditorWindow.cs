@@ -1,15 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
-using GinjaGaming.Core.Extensions;
 using UnityEditor;
-using UnityEditor.Animations;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEditor
 {
-    public enum CharacterEditorType {ThirdPerson, FirstPerson, AI }
     public class CharacterConfigurationEditorWindow : EditorWindow
     {
         [SerializeField] private VisualTreeAsset tree;
