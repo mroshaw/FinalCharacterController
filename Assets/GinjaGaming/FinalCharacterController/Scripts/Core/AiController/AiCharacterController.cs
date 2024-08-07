@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController.Core.AiController
+namespace GinjaGaming.FinalCharacterController.Core.Utils.AiController
 {
     public class AiCharacterController : MonoBehaviour
     {

@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/GinjaGaming/FinalCharacterController/Scripts/Editor/InspectorWindowStyles.uss?fileID=7433441132597879392&amp;guid=1bef236dc12181f44b1991e3710952ac&amp;type=3#InspectorWindowStyles" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <uie:PropertyField name="ReferenceControllerPropertyField" binding-path="referenceController" label="Reference Controller&#x9;" class="Property" />
+        <uie:PropertyField name="AnimMappingsPropertyField" binding-path="animMappings" label="Mappings&#x9;" class="Property" />
+        <ui:Button text="Validate" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ValidateButton" class="Button" />
+    </ui:VisualElement>
+</ui:UXML>

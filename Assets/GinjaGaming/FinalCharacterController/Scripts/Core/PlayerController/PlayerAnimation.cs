@@ -1,6 +1,7 @@
+using GinjaGaming.FinalCharacterController.Core.CharacterController;
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController.Core.Player
+namespace GinjaGaming.FinalCharacterController.Core.PlayerController
 {
     public class PlayerAnimation : CharacterAnimation
     {
@@ -16,7 +17,7 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
         protected override void Awake()
         {
             base.Awake();
-            _playerController = CharacterController as PlayerController;
+            _playerController = BaseCharacterController as PlayerController;
         }
         #endregion
 
@@ -28,6 +29,5 @@ namespace GinjaGaming.FinalCharacterController.Core.Player
             Animator.SetFloat(RotationMismatchHash, _playerController.RotationMismatch);
         }
         #endregion
-
     }
 }

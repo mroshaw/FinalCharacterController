@@ -125,7 +125,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
                     Debug.LogError($"CharacterAnimationSettings: AnimClip is empty on: {animMapping.AnimLabel}");
                     return;
                 }
-                animMapping.ApplyAnimSettings(animatorController, animClip, mirrorAnimation, animSpeed);
+                animMapping.ApplyAnimSettings(animatorController, animClip, mirrorAnimation, animSpeed, true);
             }
         }
     }

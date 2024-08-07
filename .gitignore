@@ -73,3 +73,11 @@ crashlytics-build.properties
 
 # Rider IDE
 .idea/
+
+# Third Party Assets
+/[Aa]ssets/ECM2/
+/[Aa]ssets/ECM.meta
+/[Aa]ssets/ManNeko_Assets/
+/[Aa]ssets/ManNeko_Assets.meta
+/[Aa]ssets/Anims/
+/[Aa]ssets/Anims.meta

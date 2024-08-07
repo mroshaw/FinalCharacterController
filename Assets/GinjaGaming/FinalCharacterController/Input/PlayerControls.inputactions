@@ -776,7 +776,7 @@
                 {
                     "name": "",
                     "id": "dea8fce6-794a-4f42-8947-8e49bcab190a",
-                    "path": "<Gamepad>/rightShoulder",
+                    "path": "<Gamepad>/leftStick/down",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -813,6 +813,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard and Mouse",
+                    "action": "ToggleWalk",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "006749bc-d662-43a5-8ab3-6d6dd54d7d08",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
                     "action": "ToggleWalk",
                     "isComposite": false,
                     "isPartOfComposite": false

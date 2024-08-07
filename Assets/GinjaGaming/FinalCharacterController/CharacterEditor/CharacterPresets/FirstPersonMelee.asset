@@ -12,4 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f71dc5af571104d4eaa4059a9b13994e, type: 3}
   m_Name: FirstPersonMelee
   m_EditorClassIdentifier: 
-  cameraPrefab: {fileID: 0}
+  playerPrefab: {fileID: 0}
+  footstepPoolPrefab: {fileID: 0}
+  animPresets: {fileID: 0}
+  playerLayer: Player
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 1

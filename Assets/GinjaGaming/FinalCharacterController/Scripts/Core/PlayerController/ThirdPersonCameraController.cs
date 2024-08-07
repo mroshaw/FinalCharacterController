@@ -1,9 +1,9 @@
 
-using GinjaGaming.FinalCharacterController.Core.Input;
+using GinjaGaming.FinalCharacterController.Core.PlayerController.Input;
 using Unity.Cinemachine;
 using UnityEngine;
 
-namespace GinjaGaming.FinalCharacterController.Core.Player
+namespace GinjaGaming.FinalCharacterController.Core.PlayerController
 {
     [DefaultExecutionOrder(-1)]
     public class ThirdPersonCameraController : MonoBehaviour

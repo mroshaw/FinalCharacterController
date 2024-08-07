@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
-using GinjaGaming.Core.Extensions;
 using GinjaGaming.Editor;
-using GinjaGaming.FinalCharacterController.Core;
-using GinjaGaming.FinalCharacterController.Core.Footsteps;
+using GinjaGaming.FinalCharacterController.Core.CharacterController;
+using GinjaGaming.FinalCharacterController.Core.CharacterController.Footsteps;
+using GinjaGaming.FinalCharacterController.Core.Extensions;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
+using CharacterController = UnityEngine.CharacterController;
 using Vector3 = UnityEngine.Vector3;
 
 namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEditor
 {
 
     [CreateAssetMenu(fileName = "CharacterEditorPreset", menuName = "Final Character Controller/Character Editor Preset", order = 1)]
+    [Serializable]
     public class CharacterEditorPreset : ScriptableObject
     {
         #region Class Variables

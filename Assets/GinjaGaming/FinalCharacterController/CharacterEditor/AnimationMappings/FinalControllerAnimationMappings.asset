@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7fdca12436ff3143b0df0091d512544, type: 3}
   m_Name: FinalControllerAnimationMappings
   m_EditorClassIdentifier: 
-  referenceController: {fileID: 9100000, guid: 539311f8059554149b5b18c5c2a0d25e, type: 2}
+  referenceController: {fileID: 9100000, guid: abb540e2080aa28408c4ae663dbaf94e, type: 2}
   animMappings:
   - animationHeader: Attack
     animationName: Unarmed Melee Attack
@@ -41,21 +41,21 @@ MonoBehaviour:
     stateMachineName: Locomotion
     layerName: Base Layer
     blendTreeName: Falling
-    blendTreeIndex: 0
+    blendTreeIndex: 1
   - animationHeader: Falling
     animationName: Falling Left
     stateName: Falling Blend Tree
     stateMachineName: Locomotion
     layerName: Base Layer
     blendTreeName: Falling
-    blendTreeIndex: 1
+    blendTreeIndex: 0
   - animationHeader: Falling
     animationName: Falling Right
     stateName: Falling Blend Tree
     stateMachineName: Locomotion
     layerName: Base Layer
     blendTreeName: Falling
-    blendTreeIndex: 2
+    blendTreeIndex: 1
   - animationHeader: Jumping
     animationName: Jump Up
     stateName: Jump Up Blend Tree
@@ -104,14 +104,14 @@ MonoBehaviour:
     stateMachineName: Movement
     layerName: Base Layer
     blendTreeName: Idle
-    blendTreeIndex: 0
+    blendTreeIndex: 1
   - animationHeader: Movement
     animationName: Idle Rotate Left
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
     blendTreeName: Idle
-    blendTreeIndex: 1
+    blendTreeIndex: 0
   - animationHeader: Movement
     animationName: Idle Rotate Right
     stateName: Locomotion Blend
@@ -124,57 +124,43 @@ MonoBehaviour:
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
-    blendTreeName: Backwards
-    blendTreeIndex: 0
+    blendTreeName: WalkBack
+    blendTreeIndex: 1
   - animationHeader: Movement
     animationName: Walk Back Left
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
-    blendTreeName: Backwards
-    blendTreeIndex: 1
+    blendTreeName: WalkBack
+    blendTreeIndex: 0
   - animationHeader: Movement
     animationName: Walk Back Right
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
-    blendTreeName: Backwards
+    blendTreeName: WalkBack
     blendTreeIndex: 2
-  - animationHeader: Movement
-    animationName: Walk Idle
-    stateName: Locomotion Blend
-    stateMachineName: Movement
-    layerName: Base Layer
-    blendTreeName: Walking
-    blendTreeIndex: 0
   - animationHeader: Movement
     animationName: Walk Forward
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
-    blendTreeName: Walking
+    blendTreeName: Walk
     blendTreeIndex: 1
   - animationHeader: Movement
     animationName: Walk Left
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
-    blendTreeName: Walking
-    blendTreeIndex: 2
+    blendTreeName: Walk
+    blendTreeIndex: 0
   - animationHeader: Movement
     animationName: Walk Right
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
-    blendTreeName: Walking
-    blendTreeIndex: 3
-  - animationHeader: Movement
-    animationName: Run Idle
-    stateName: Locomotion Blend
-    stateMachineName: Movement
-    layerName: Base Layer
-    blendTreeName: Run
-    blendTreeIndex: 0
+    blendTreeName: Walk
+    blendTreeIndex: 2
   - animationHeader: Movement
     animationName: Run Forward
     stateName: Locomotion Blend
@@ -188,21 +174,14 @@ MonoBehaviour:
     stateMachineName: Movement
     layerName: Base Layer
     blendTreeName: Run
-    blendTreeIndex: 2
+    blendTreeIndex: 0
   - animationHeader: Movement
     animationName: Run Right
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
     blendTreeName: Run
-    blendTreeIndex: 3
-  - animationHeader: Movement
-    animationName: Sprint Idle
-    stateName: Locomotion Blend
-    stateMachineName: Movement
-    layerName: Base Layer
-    blendTreeName: Sprint
-    blendTreeIndex: 0
+    blendTreeIndex: 2
   - animationHeader: Movement
     animationName: Sprint Forward
     stateName: Locomotion Blend
@@ -216,14 +195,14 @@ MonoBehaviour:
     stateMachineName: Movement
     layerName: Base Layer
     blendTreeName: Sprint
-    blendTreeIndex: 2
+    blendTreeIndex: 0
   - animationHeader: Movement
     animationName: Sprint Right
     stateName: Locomotion Blend
     stateMachineName: Movement
     layerName: Base Layer
     blendTreeName: Sprint
-    blendTreeIndex: 3
+    blendTreeIndex: 2
   - animationHeader: Movement
     animationName: Turn 90 Left Crouched
     stateName: Turn 90 L Crouched

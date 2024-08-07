@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using GinjaGaming.FinalCharacterController.Core.Utils;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -9,12 +11,11 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
     public class CharacterConfigurationEditorWindow : EditorWindow
     {
         [SerializeField] private VisualTreeAsset tree;
-
-        private Transform _characterController;
-        private CharacterEditorPreset _characterEditorPreset;
+        [SerializeField] private Transform characterModel;
+        [SerializeField] private CharacterEditorPreset characterEditorPreset;
+        private TextField _logText;
 
         private Button _applyButton;
-        private TextField _logText;
 
         [MenuItem("Window/Final Character Controller/Character Configuration Window")]
         public static void ShowWindow()
@@ -23,19 +24,24 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             charEditorWindow.titleContent = new GUIContent("Final Character Controller");
         }
 
+        private void OnEnable()
+        {
+            Reset();
+        }
+
         public void CreateGUI()
         {
             tree.CloneTree(rootVisualElement);
 
             rootVisualElement.Q<ObjectField>("CharGameObject").RegisterValueChangedCallback(evt =>
             {
-                _characterController = evt.newValue as Transform;
+                characterModel = evt.newValue as Transform;
                 UpdateApplyButtonState(ValidateUserInput(false));
             });
 
             rootVisualElement.Q<ObjectField>("CharacterPreset").RegisterValueChangedCallback(evt =>
             {
-                _characterEditorPreset = evt.newValue as CharacterEditorPreset;
+                characterEditorPreset = evt.newValue as CharacterEditorPreset;
                 UpdateApplyButtonState(ValidateUserInput(false));
             });
 
@@ -54,7 +60,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
 
         private void AddToLog(string logText)
         {
-            _logText.value += $"{logText}\n";
+            this._logText.value += $"{logText}\n";
             Debug.Log(logText);
         }
 
@@ -96,9 +102,10 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             }
 
             AddToLog("Adding presets...");
-            _characterEditorPreset.ApplyPreset(_characterController.gameObject, out List<string> applyPresetResults);
+            characterEditorPreset.ApplyPreset(characterModel.gameObject, out List<string> applyPresetResults);
             AddToLog(applyPresetResults);
             AddToLog("Done!");
+            UpdateApplyButtonState(ValidateUserInput(false));
         }
 
         private bool ValidateUserInput(bool showLog)
@@ -106,26 +113,32 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             bool validationResult = true;
             List <string> resultLogs = new();
 
-            if (!_characterEditorPreset)
+            if (!characterEditorPreset)
             {
                 validationResult = false;
                 resultLogs.Add("Please select a character preset!");
             }
 
             // Validate the Character presets
-            if(_characterEditorPreset && !_characterEditorPreset.Validate(out List<string> validationResultLogs))
+            if(characterEditorPreset && !characterEditorPreset.Validate(out List<string> validationResultLogs))
             {
                 validationResult = false;
                 resultLogs.AddRange(validationResultLogs);
             }
 
-            if (!_characterController)
+            if (!characterModel)
             {
                 validationResult = false;
                 resultLogs.Add("Please select your character model game object!");
             }
 
-            if (_characterController && !_characterController.GetComponent<Animator>())
+            if (characterModel && characterModel.transform.root.GetComponentInChildren<CharacterController>(true))
+            {
+                validationResult = false;
+                resultLogs.Add("Selected GameObject already has a Character Controller set up!");
+            }
+
+            if (characterModel && !characterModel.GetComponent<Animator>())
             {
                 validationResult = false;
                 resultLogs.Add("Please add an animator to your character model and ensure the Avatar is set!");
@@ -137,5 +150,13 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             }
             return validationResult;
         }
+
+        private void Reset()
+        {
+            characterModel = null;
+            characterEditorPreset = null;
+        }
+
+
     }
 }

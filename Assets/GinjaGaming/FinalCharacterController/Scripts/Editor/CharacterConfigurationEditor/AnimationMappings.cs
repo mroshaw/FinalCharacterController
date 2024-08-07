@@ -27,6 +27,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
                     validationErrors.Add($"Animation Map is missing layer name: {currAnimMapping.AnimLabel}");
                     validationResult = false;
                 }
+                currAnimMapping.ApplyAnimSettings(referenceController, null, false, 0.0f, false);
             }
 
             return validationResult;
@@ -54,15 +55,12 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
         [Serializable]
         public class AnimMapping
         {
-            [Header("Animation")]
             public string animationHeader;
-
             public string animationName;
             public string stateName;
             public string stateMachineName;
             public string layerName;
 
-            [Header("Blend Tree")]
             public string blendTreeName;
             public int blendTreeIndex;
 
@@ -119,7 +117,7 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
             #endregion
             #region Public class methods
             public void ApplyAnimSettings(AnimatorController animatorController,
-                AnimationClip animClip, bool mirrorAnim, float animSpeed)
+                AnimationClip animClip, bool mirrorAnim, float animSpeed, bool applyChanges)
             {
                 AnimatorState animationState = GetStateInController(animatorController);
 
@@ -128,20 +126,32 @@ namespace GinjaGaming.FinalCharacterController.Editor.CharacterConfigurationEdit
                     BlendTree blendTree = GetBlendTreeInState(animationState);
 
                     ChildMotion[] newMotions = blendTree.children;
-                    newMotions[blendTreeIndex].motion = animClip;
-                    newMotions[blendTreeIndex].mirror = mirrorAnim;
-                    if (animSpeed > 0)
+                    if (blendTreeIndex >= newMotions.Length)
                     {
-                        newMotions[blendTreeIndex].timeScale = animSpeed;
+                        Debug.LogError($"Blend Tree index is out of range! {AnimLabel}");
                     }
-                    blendTree.children = newMotions;
+
+                    if (applyChanges)
+                    {
+
+                        newMotions[blendTreeIndex].motion = animClip;
+                        newMotions[blendTreeIndex].mirror = mirrorAnim;
+                        if (animSpeed > 0)
+                        {
+                            newMotions[blendTreeIndex].timeScale = animSpeed;
+                        }
+                        blendTree.children = newMotions;
+                    }
 
                 }
                 else
                 {
-                    animationState.mirror = mirrorAnim;
-                    animationState.speed = animSpeed;
-                    animationState.motion = animClip;
+                    if (applyChanges)
+                    {
+                        animationState.mirror = mirrorAnim;
+                        animationState.speed = animSpeed;
+                        animationState.motion = animClip;
+                    }
                 }
             }
             #endregion

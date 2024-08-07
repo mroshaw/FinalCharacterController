@@ -16,7 +16,7 @@ MonoBehaviour:
     type: 3}
   footstepPoolPrefab: {fileID: 5179019109531595744, guid: e1e92812b18b46f45ac36eb6a97a205c,
     type: 3}
-  animPresets: {fileID: 11400000, guid: 4382a29d15d2efa4a8640d0585c8420a, type: 2}
+  animPresets: {fileID: 11400000, guid: 7606d46e19528b44d8689ea6b0761a69, type: 2}
   playerLayer: Player
   groundLayerMask:
     serializedVersion: 2
